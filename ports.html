@@ -1,0 +1,102 @@
+<html>
+  <head>
+    <style>
+      body {
+        width: 1000px;
+        margin: 10px auto;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        display: flex;
+
+      }
+      .div {
+        width: 300px;
+        /*line-height: 28px;*/
+        border: 3px solid gray;
+        border-radius: 30px;
+        margin-right: 15px;
+        padding: 15px;
+      }
+
+      ul {
+        border: 2px solid lightgray;
+        border-radius: 15px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Hi</h1>
+    <div id="elm"></div>
+
+    <div class="div" id="div1">
+      <ul class="ul1">
+        <li><a href="">Pick me!</a></li>
+        <li><a href="">Pick me!</a></li>
+        <li><a href="">Pick me!</a></li>
+        <li><a href="">Pick me!</a></li>
+        <li><a href="">Pick me!</a></li>
+      </ul>
+      <ul class="ul2">
+        <li><a href="">Pick me!</a></li>
+        <li><a href="">Pick me!</a></li>
+        <li><a href="">Pick me!</a></li>
+        <li><a href="">Pick me!</a></li>
+        <li><a href="">Pick me!</a></li>
+      </ul>
+    </div>
+    <div class="div" id="div2">
+      <ul class="ul1">
+        <li><a href="">Pick me!</a></li>
+        <li><a href="">Pick me!</a></li>
+        <li><a href="">Pick me!</a></li>
+        <li><a href="">Pick me!</a></li>
+        <li><a href="">Pick me!</a></li>
+      </ul>
+      <ul class="ul2">
+        <li><a href="">Pick me!</a></li>
+        <li><a href="">Pick me!</a></li>
+        <li><a href="">Pick me!</a></li>
+        <li><a href="">Pick me!</a></li>
+        <li><a href="">Pick me!</a></li>
+      </ul>
+    </div>
+  </body>
+  <script src="./ports.js"></script>
+  <script src="./highlight.js"></script>
+  <script>
+    const div = document.getElementById('elm');
+    const app = Elm.TreeNavigation.embed(div);
+
+    document.onkeydown = (e) => {
+      if (e.key === 'Tab') {
+        e.preventDefault();
+      }
+    }
+
+    var state = {
+      currentNode: makeTree(document.body),
+      currentChildIndex: -1,
+      highlights: [createHighlight(makeTree(document.body).element)]
+    }
+
+    app.ports.select.subscribe((time) => {
+      console.log('ENTER');
+    });
+    app.ports.next.subscribe((time) => {
+      console.log('TAB');
+      // increment currentChildIndex and remove highlight
+      state.currentChildIndex = (state.currentChildIndex + 1) % state.currentNode.children.length;
+      state.highlights[state.highlights.length-1].highlight.remove();
+      state.highlights = state.highlights.slice(0, state.highlights.length-1);
+
+      // highlight new currentChild
+      const {highlight, el} = createHighlight(state.currentNode.children[state.currentChildIndex].element);
+      state.highlights.push({highlight, el});
+      document.body.append(highlight);
+
+      
+      // app.ports.highlight.send('hi');
+    });
+  </script>
+</html>
