@@ -1,3 +1,7 @@
+// @TODO
+// - preview what children will be cyclable
+// - auto highlight first child when making a selection
+
 var state = {
     currentNode: makeTree(document.body),
     currentChildIndex: -1,
@@ -30,7 +34,7 @@ document.addEventListener('keydown', e => {
 
     // if leaf node, then click
     if (state.currentNode.children.length === 0) {
-      
+
     }
   }
 });
