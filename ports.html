@@ -24,9 +24,17 @@
         border-radius: 15px;
       }
     </style>
+    <style>
+      #elm {
+        position: fixed;
+        top: 0px;
+        left: 0px;
+        width: 100%;
+        height: 100%;
+      }
+    </style>
   </head>
   <body>
-    <h1>Hi</h1>
     <div id="elm"></div>
 
     <div class="div" id="div1">
@@ -96,13 +104,22 @@
       console.log('TAB');
       // increment currentChildIndex and remove highlight
       state.currentChildIndex = (state.currentChildIndex + 1) % state.currentNode.children.length;
-      state.highlights[state.highlights.length-1].highlight.remove();
-      state.highlights = state.highlights.slice(0, state.highlights.length-1);
+      const elementToHighlight = state.currentNode.children[state.currentChildIndex].element;
+      const boundingBox = elementToHighlight.getBoundingClientRect();
+      console.log(boundingBox);
+      app.ports.highlight.send({
+        x: ~~boundingBox.left,
+        y: ~~boundingBox.top,
+        width: ~~elementToHighlight.offsetWidth,
+        height: ~~elementToHighlight.offsetHeight
+      });
+      // state.highlights[state.highlights.length-1].highlight.remove();
+      // state.highlights = state.highlights.slice(0, state.highlights.length-1);
 
       // highlight new currentChild
-      const {highlight, el} = createHighlight(state.currentNode.children[state.currentChildIndex].element);
-      state.highlights.push({highlight, el});
-      document.body.append(highlight);
+      // const {highlight, el} = createHighlight(state.currentNode.children[state.currentChildIndex].element);
+      // state.highlights.push({highlight, el});
+      // document.body.append(highlight);
 
 
       // app.ports.highlight.send('hi');
