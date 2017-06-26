@@ -24,33 +24,41 @@ type alias Geometry =
 type alias Model =
   { index : Int
   , highlightGeometry: Geometry
+  , isShiftDown : Bool
   }
 
 init : (Model, Cmd Msg)
 init =
-  (Model -1 { x = 0, y = 0, width = 0, height = 0}, Cmd.none)
+  (Model -1 { x = 0, y = 0, width = 0, height = 0} False, Cmd.none)
 
 
 -- UPDATE
 type Msg
-  = KeyMsg Keyboard.KeyCode
+  = KeyDownMsg Keyboard.KeyCode
+  | KeyUpMsg Keyboard.KeyCode
   | Highlight Geometry
 
 update : Msg -> Model -> (Model, Cmd Msg)
-update msg {index, highlightGeometry} =
+update msg model =
   case msg of
-    KeyMsg code ->
+    KeyDownMsg code ->
       let _ = log "keycode" code
       in
       case code of
         -- Enter
-        13 -> (Model index highlightGeometry, select 1)
-        9 -> (Model index highlightGeometry, next 1)
-        _ -> (Model index highlightGeometry, Cmd.none)
+        13 -> (model, select 1)
+        -- If shift is down, then make sure you do the right thing
+        9 -> (model, next 1)
+        16 -> ({ model | isShiftDown = True }, Cmd.none)
+        _ -> (model, Cmd.none)
+    KeyUpMsg code ->
+      case code of
+        16 -> ({ model | isShiftDown = False }, Cmd.none)
+        _ -> (model, Cmd.none)
     Highlight geometry ->
       let _ = log "geometry:" geometry
       in
-      (Model index geometry, Cmd.none)
+      ({ model | highlightGeometry = geometry }, Cmd.none)
 
 -- PORT
 port next : Int -> Cmd msg
@@ -62,7 +70,8 @@ port highlight : (Geometry -> msg) -> Sub msg
 subscriptions : Model -> Sub Msg
 subscriptions model =
   Sub.batch
-  [ Keyboard.downs KeyMsg
+  [ Keyboard.downs KeyDownMsg
+  , Keyboard.ups KeyUpMsg
   , highlight Highlight
   ]
 
