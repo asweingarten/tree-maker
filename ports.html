@@ -71,7 +71,6 @@
     </div>
   </body>
   <script src="./ports.js"></script>
-  <script src="./highlight.js"></script>
   <script src="./makeTree.js"></script>
   <script>
     const div = document.getElementById('elm');
@@ -86,18 +85,20 @@
     var state = {
       currentNode: makeTree(document.body),
       currentChildIndex: -1,
-      highlights: [createHighlight(makeTree(document.body).element)]
     }
 
     app.ports.select.subscribe((time) => {
       console.log('ENTER');
       // move down tree
       state.currentNode = state.currentNode.children[state.currentChildIndex];
-      state.currentChildIndex = -1;
+      state.currentChildIndex = 0;
 
       // if leaf node, then click
       if (state.currentNode.children.length === 0) {
 
+      } else {
+        const elementToHighlight = state.currentNode.children[0].element;
+        highlight(elementToHighlight);
       }
     });
     app.ports.next.subscribe((time) => {
@@ -105,24 +106,19 @@
       // increment currentChildIndex and remove highlight
       state.currentChildIndex = (state.currentChildIndex + 1) % state.currentNode.children.length;
       const elementToHighlight = state.currentNode.children[state.currentChildIndex].element;
-      const boundingBox = elementToHighlight.getBoundingClientRect();
+      highlight(elementToHighlight);
+
+    });
+
+    function highlight(element) {
+      const boundingBox = element.getBoundingClientRect();
       console.log(boundingBox);
       app.ports.highlight.send({
         x: ~~boundingBox.left,
         y: ~~boundingBox.top,
-        width: ~~elementToHighlight.offsetWidth,
-        height: ~~elementToHighlight.offsetHeight
+        width: ~~element.offsetWidth,
+        height: ~~element.offsetHeight
       });
-      // state.highlights[state.highlights.length-1].highlight.remove();
-      // state.highlights = state.highlights.slice(0, state.highlights.length-1);
-
-      // highlight new currentChild
-      // const {highlight, el} = createHighlight(state.currentNode.children[state.currentChildIndex].element);
-      // state.highlights.push({highlight, el});
-      // document.body.append(highlight);
-
-
-      // app.ports.highlight.send('hi');
-    });
+    }
   </script>
 </html>
