@@ -5,6 +5,13 @@ import Html.Attributes exposing (style)
 import Keyboard
 import Debug exposing (log)
 
+-- TODO
+-- Pack up into chrome extension so can test on various websites
+-- Highlight the child chunks that will become available (use dotted border)
+-- Click the children
+-- How handle things that weren't there originally? e.g. modal windows (think Youtube unsubscribe)
+
+
 main =
   Html.program
   { init = init
