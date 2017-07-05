@@ -10,11 +10,12 @@ import Ports exposing (..)
 
 -- TODO
 -- Highlight the child chunks that will become available (use dotted border)
--- Click the children
 -- How handle things that weren't there originally? e.g. modal windows (think Youtube unsubscribe)
+  -- on click, check out dem DOM mutation events
 -- How handle things that go offscreen?
 -- Scroll to region
--- Ignore elements that are 0 height
+-- Ignore elements that are 0 height.... though sometimes this is too general.....
+-- On DOM mutation, update tree.... in-place tree-shaking?
 
 
 main =
@@ -49,12 +50,13 @@ update msg model =
     KeyDownMsg code ->
       let _ = log "keycode" code
       in
-      case code of
+      case (code, model.isShiftDown) of
         -- Enter
-        13 -> (model, Ports.select 1)
+        (13, _) -> (model, Ports.select 1)
         -- If shift is down, then make sure you do the right thing
-        9 -> (model, Ports.next 1)
-        16 -> ({ model | isShiftDown = True }, Cmd.none)
+        (9, False) -> (model, Ports.next 1)
+        (9, True) -> (model, Ports.up 1)
+        (16, _) -> ({ model | isShiftDown = True }, Cmd.none)
         _ -> (model, Cmd.none)
     KeyUpMsg code ->
       case code of
@@ -79,7 +81,7 @@ view : Model -> Html Msg
 view {index, highlightGeometry}  =
   let
     x = toPixel highlightGeometry.x
-    y = toPixel highlightGeometry.y
+    y = toPixel <| max highlightGeometry.y 0
     borderWidth = 3
     width = toPixel  <| highlightGeometry.width - 2*borderWidth
     height = toPixel <| highlightGeometry.height - 2*borderWidth

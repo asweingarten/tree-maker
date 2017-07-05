@@ -32,20 +32,30 @@ app.ports.select.subscribe((time) => {
 
   // if leaf node, then click
   if (state.currentNode.children.length === 0) {
-
+    state.currentNode.element.click();
   } else {
     const elementToHighlight = state.currentNode.children[0].element;
     highlight(elementToHighlight);
   }
 });
+
 app.ports.next.subscribe((time) => {
   console.log('TAB');
   // increment currentChildIndex and remove highlight
   state.currentChildIndex = (state.currentChildIndex + 1) % state.currentNode.children.length;
   const elementToHighlight = state.currentNode.children[state.currentChildIndex].element;
   highlight(elementToHighlight);
-  console.log(elementToHighlight);
+  console.log(state.currentNode.children[state.currentChildIndex]);
 
+});
+
+app.ports.up.subscribe((x) => {
+  console.log('SHIFT + TAB');
+  if (state.currentNode.parent) {
+    state.currentChildIndex = 0;
+    state.currentNode = state.currentNode.parent;
+    highlight(state.currentNode)
+  }
 });
 
 function highlight(element) {
