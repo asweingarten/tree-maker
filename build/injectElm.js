@@ -5,7 +5,7 @@ var w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
 var h = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
 elmDiv.style.width = w;
 elmDiv.style.height = h;
-elmDiv.style['z-index'] = 9999999;
+elmDiv.style['z-index'] = 2000000001;
 
 document.body.appendChild(elmDiv);
 
@@ -17,10 +17,12 @@ document.onkeydown = (e) => {
   }
 }
 
-var state = {
+state = {
   currentNode: makeTree(document.body),
   currentChildIndex: -1,
 }
+
+console.log(state.currentNode);
 
 app.ports.select.subscribe((time) => {
   console.log('ENTER');
@@ -42,6 +44,7 @@ app.ports.next.subscribe((time) => {
   state.currentChildIndex = (state.currentChildIndex + 1) % state.currentNode.children.length;
   const elementToHighlight = state.currentNode.children[state.currentChildIndex].element;
   highlight(elementToHighlight);
+  console.log(elementToHighlight);
 
 });
 
