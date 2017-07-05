@@ -1,15 +1,20 @@
-port module TreeNavigation exposing (..)
+module TreeNavigation exposing (..)
 
 import Html exposing (..)
-import Html.Attributes exposing (style)
+import Html.Attributes exposing (style, id)
 import Keyboard
 import Debug exposing (log)
 
+import Types exposing(Geometry)
+import Ports exposing (..)
+
 -- TODO
--- Pack up into chrome extension so can test on various websites
 -- Highlight the child chunks that will become available (use dotted border)
 -- Click the children
 -- How handle things that weren't there originally? e.g. modal windows (think Youtube unsubscribe)
+-- How handle things that go offscreen?
+-- Scroll to region
+-- Ignore elements that are 0 height
 
 
 main =
@@ -18,13 +23,6 @@ main =
   , view = view
   , update = update
   , subscriptions = subscriptions
-  }
-
-type alias Geometry =
-  { x: Int
-  , y: Int
-  , width: Int
-  , height: Int
   }
 
 -- MODEL
@@ -53,9 +51,9 @@ update msg model =
       in
       case code of
         -- Enter
-        13 -> (model, select 1)
+        13 -> (model, Ports.select 1)
         -- If shift is down, then make sure you do the right thing
-        9 -> (model, next 1)
+        9 -> (model, Ports.next 1)
         16 -> ({ model | isShiftDown = True }, Cmd.none)
         _ -> (model, Cmd.none)
     KeyUpMsg code ->
@@ -67,11 +65,6 @@ update msg model =
       in
       ({ model | highlightGeometry = geometry }, Cmd.none)
 
--- PORT
-port next : Int -> Cmd msg
-port select : Int -> Cmd msg
-port highlight : (Geometry -> msg) -> Sub msg
-
 -- SUBSCRIPTIONS
 
 subscriptions : Model -> Sub Msg
@@ -79,16 +72,17 @@ subscriptions model =
   Sub.batch
   [ Keyboard.downs KeyDownMsg
   , Keyboard.ups KeyUpMsg
-  , highlight Highlight
+  , Ports.highlight Highlight
   ]
 
 view : Model -> Html Msg
 view {index, highlightGeometry}  =
   let
-    x = toString highlightGeometry.x ++ "px"
-    y = toString highlightGeometry.y ++ "px"
-    width = toString highlightGeometry.width ++ "px"
-    height = toString highlightGeometry.height ++ "px"
+    x = toPixel highlightGeometry.x
+    y = toPixel highlightGeometry.y
+    borderWidth = 3
+    width = toPixel  <| highlightGeometry.width - 2*borderWidth
+    height = toPixel <| highlightGeometry.height - 2*borderWidth
     myStyle =
       style
         [ ("position", "fixed")
@@ -98,6 +92,11 @@ view {index, highlightGeometry}  =
         , ("height", height)
         , ("border", "3px solid salmon")
         , ("border-radius", "3px")
+        , ("z-index", "2000000001")
         ]
   in
-  div [myStyle] []
+  div [myStyle, id "my-highlight"] []
+
+toPixel : Int -> String
+toPixel num =
+  toString num ++ "px"
