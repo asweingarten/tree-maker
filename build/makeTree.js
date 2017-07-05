@@ -8,6 +8,10 @@ function makeTree(element, parent) {
       children: []
     };
   }
+  const geometry = element.getBoundingClientRect();
+  if (geometry.height === 0 || geometry.width === 0) {
+    return null;
+  }
 
   const children = asArray(element.children);
 
