@@ -1,15 +1,15 @@
-const elmDiv = document.createElement('div');
-elmDiv.id = 'eyegaze-overlay';
-elmDiv.style.position  ='fixed';
+const treeNavDiv = document.createElement('div');
+treeNavDiv.id = 'tree-navigation';
+treeNavDiv.style.position  ='fixed';
 var w = Math.max(document.documentElement.clientWidth, window.innerWidth || 0);
 var h = Math.max(document.documentElement.clientHeight, window.innerHeight || 0);
-elmDiv.style.width = w;
-elmDiv.style.height = h;
-elmDiv.style['z-index'] = 2000000001;
+treeNavDiv.style.width = w;
+treeNavDiv.style.height = h;
+treeNavDiv.style['z-index'] = 2000000001;
 
-document.body.appendChild(elmDiv);
+document.body.appendChild(treeNavDiv);
 
-const TreeNavigation = Elm.TreeNavigation.embed(elmDiv);
+const TreeNavigation = Elm.TreeNavigation.embed(treeNavDiv);
 
 document.onkeydown = (e) => {
   if (e.key === 'Tab' || e.key === 'Enter') {
