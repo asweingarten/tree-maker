@@ -8,9 +8,16 @@ function makeTree(element, parent) {
       children: []
     };
   }
+
+
   const geometry = element.getBoundingClientRect();
   if (geometry.height === 0 || geometry.width === 0) {
+    console.log(`SKIPPING: ${element.id} ${geometry}`)
     return null;
+  }
+  if (element.id === 'appbar-nav') {
+    console.log('APPBAR NAV')
+    console.log(geometry)
   }
 
   const children = asArray(element.children);

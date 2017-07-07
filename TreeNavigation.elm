@@ -15,7 +15,11 @@ import Ports exposing (..)
 -- How handle things that go offscreen?
 -- Scroll to region
 -- Ignore elements that are 0 height.... though sometimes this is too general.....
--- On DOM mutation, update tree.... in-place tree-shaking?
+-- On DOM mutation, update tree....
+    -- handling modals
+    -- single page app page transitions
+-- State machine of what happens on DOM mutations?
+-- Error recovery, refresh the page on error
 
 
 main =
@@ -43,6 +47,7 @@ type Msg
   = KeyDownMsg Keyboard.KeyCode
   | KeyUpMsg Keyboard.KeyCode
   | Highlight Geometry
+  | External String
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
@@ -66,6 +71,16 @@ update msg model =
       let _ = log "geometry:" geometry
       in
       ({ model | highlightGeometry = geometry }, Cmd.none)
+    External cmdString ->
+      let
+        cmd =
+          case cmdString of
+            "Up" -> Ports.up 1
+            "Select" -> Ports.select 1
+            "Next" -> Ports.next 1
+            _ -> Cmd.none
+      in
+      (model, cmd)
 
 -- SUBSCRIPTIONS
 
@@ -75,6 +90,7 @@ subscriptions model =
   [ Keyboard.downs KeyDownMsg
   , Keyboard.ups KeyUpMsg
   , Ports.highlight Highlight
+  , Ports.receiveExternalCmd External
   ]
 
 view : Model -> Html Msg

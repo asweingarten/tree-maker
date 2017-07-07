@@ -14,7 +14,7 @@
     {
       "matches": ["https://*/*"],
       "css": [],
-      "js": ["main.js", "makeTree.js", "injectElm.js"]
+      "js": ["treeNav.js", "makeTree.js", "injectTreeNavigation.js"]
     }
   ],
 

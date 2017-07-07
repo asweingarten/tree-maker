@@ -9,7 +9,7 @@ elmDiv.style['z-index'] = 2000000001;
 
 document.body.appendChild(elmDiv);
 
-const app = Elm.TreeNavigation.embed(elmDiv);
+const TreeNavigation = Elm.TreeNavigation.embed(elmDiv);
 
 document.onkeydown = (e) => {
   if (e.key === 'Tab' || e.key === 'Enter') {
@@ -24,7 +24,7 @@ state = {
 
 console.log(state.currentNode);
 
-app.ports.select.subscribe((time) => {
+TreeNavigation.ports.select.subscribe((time) => {
   console.log('ENTER');
   // move down tree
   state.currentNode = state.currentNode.children[state.currentChildIndex];
@@ -39,7 +39,7 @@ app.ports.select.subscribe((time) => {
   }
 });
 
-app.ports.next.subscribe((time) => {
+TreeNavigation.ports.next.subscribe((time) => {
   console.log('TAB');
   // increment currentChildIndex and remove highlight
   state.currentChildIndex = (state.currentChildIndex + 1) % state.currentNode.children.length;
@@ -49,7 +49,7 @@ app.ports.next.subscribe((time) => {
 
 });
 
-app.ports.up.subscribe((x) => {
+TreeNavigation.ports.up.subscribe((x) => {
   console.log('SHIFT + TAB');
   if (state.currentNode.parent) {
     state.currentChildIndex = 0;
@@ -61,7 +61,7 @@ app.ports.up.subscribe((x) => {
 function highlight(element) {
   const boundingBox = element.getBoundingClientRect();
   console.log(boundingBox);
-  app.ports.highlight.send({
+  TreeNavigation.ports.highlight.send({
     x: ~~boundingBox.left,
     y: ~~boundingBox.top,
     width: ~~element.offsetWidth,
