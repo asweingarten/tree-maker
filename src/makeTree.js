@@ -1,29 +1,30 @@
 // Returns a pared down DOM-tree
 function makeTree(element, parent) {
   // if leaf node, return right away. Doesn't matter if images or w/e is tucked away inside
-  if (element.nodeName === 'A' || element.nodeName === 'BUTTON') {
-    return {
-      parent,
-      element,
-      children: []
-    };
-  }
+  let node = {
+    parent,
+    element,
+    children: []
+  };
 
+  if (element.nodeName === 'A' || element.nodeName === 'BUTTON') {
+    return node
+  }
 
   const geometry = element.getBoundingClientRect();
-  if (geometry.height === 0 || geometry.width === 0) {
-    console.log(`SKIPPING: ${element.id} ${geometry}`)
-    return null;
-  }
-  if (element.id === 'appbar-nav') {
-    console.log('APPBAR NAV')
-    console.log(geometry)
-  }
+  // if (geometry.height === 0 || geometry.width === 0) {
+  //   console.log(`SKIPPING: ${element.id} ${geometry}`)
+  //   return null;
+  // }
+  // if (element.id === 'appbar-nav') {
+  //   console.log('APPBAR NAV')
+  //   console.log(geometry)
+  // }
 
   const children = asArray(element.children);
 
 
-  const subRegions = children.map(c => makeTree(c, element)).filter(r => r !== null);
+  const subRegions = children.map(c => makeTree(c, node)).filter(r => r !== null);
 
   // if a non-clickable has no children, then we don't want it
   if (subRegions.length === 0) {
@@ -35,11 +36,8 @@ function makeTree(element, parent) {
   }
 
   // else return
-  return {
-    parent,
-    element,
-    children: subRegions
-  };
+  node.children = subRegions;
+  return node;
 
 }
 

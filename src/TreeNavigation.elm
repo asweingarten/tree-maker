@@ -20,7 +20,10 @@ import Ports exposing (..)
     -- single page app page transitions
 -- State machine of what happens on DOM mutations?
 -- Error recovery, refresh the page on error
-
+-- if children are bigger than the top-level div, then it's misleading...
+  -- e.g. https://stackoverflow.com/questions/8967902/why-do-you-need-to-put-bin-bash-at-the-beginning-of-a-script-file
+  --      there are two containing divs and only one of them is the right size. Maybe should remove redundant
+  --      divs AFTER tree creation and pick the bigger one?
 
 main =
   Html.program
