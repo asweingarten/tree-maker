@@ -114,6 +114,7 @@ view {index, highlightGeometry}  =
         , ("border", "3px solid salmon")
         , ("border-radius", "3px")
         , ("z-index", "2000000001")
+        , ("pointer-events", "none")
         ]
   in
   div [myStyle, id "my-highlight"] []
