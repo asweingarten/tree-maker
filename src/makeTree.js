@@ -7,11 +7,17 @@ function makeTree(element, parent) {
     children: []
   };
 
+
+
   if (element.nodeName === 'A' || element.nodeName === 'BUTTON') {
+    const geometry = element.getBoundingClientRect();
+    if (geometry.width === 0 || geometry.height === 0) {
+      return null;
+    }
     return node
   }
 
-  const geometry = element.getBoundingClientRect();
+  // const geometry = element.getBoundingClientRect();
   // if (geometry.height === 0 || geometry.width === 0) {
   //   console.log(`SKIPPING: ${element.id} ${geometry}`)
   //   return null;
