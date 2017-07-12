@@ -64,6 +64,7 @@ update msg model =
         -- If shift is down, then make sure you do the right thing
         (9, False) -> (model, Ports.next 1)
         (9, True) -> (model, Ports.up 1)
+        (96, _) -> (model, Ports.up 1) -- ` for ps4 support
         (16, _) -> ({ model | isShiftDown = True }, Cmd.none)
         _ -> (model, Cmd.none)
     KeyUpMsg code ->
