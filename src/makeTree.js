@@ -30,7 +30,7 @@ function makeTree(element, parent) {
   const children = asArray(element.children);
 
 
-  const subRegions = children.map(c => makeTree(c, node)).filter(r => r !== null);
+  let subRegions = children.map(c => makeTree(c, node)).filter(r => r !== null);
 
   // if a non-clickable has no children, then we don't want it
   if (subRegions.length === 0) {
@@ -41,10 +41,28 @@ function makeTree(element, parent) {
     return onlyChild;
   }
 
+  // inspect children, if one is zero-height, then bring it's children into the list.
+  subRegions = subRegions.map(r => {
+    if (isZeroHeight(r)) {
+      return r.children;
+    } else {
+      return r;
+    }
+  });
+
+  // flatten the array
+  subRegions = [].concat.apply([], subRegions);
+
   // else return
   node.children = subRegions;
   return node;
 
+}
+
+function isZeroHeight(node) {
+  const el = node.element;
+  const geometry = el.getBoundingClientRect();
+  return geometry.height === 0;
 }
 
 function asArray(htmlCollection) {
