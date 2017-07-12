@@ -59,7 +59,7 @@ TreeNavigation.ports.up.subscribe((x) => {
   if (state.currentNode.parent) {
     state.currentChildIndex = 0;
     state.currentNode = state.currentNode.parent;
-    highlight(state.currentNode.element)
+    highlight(state.currentNode.children[state.currentChildIndex].element)
   }
 });
 
