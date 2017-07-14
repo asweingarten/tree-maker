@@ -26,22 +26,33 @@ state = {
 console.log(state.currentNode);
 
 TreeNavigation.ports.select.subscribe((time) => {
-  console.log('SELECT');
-  if (state.currentNode.children.length === 0) {
-    return;
-  }
+  const currentlyHighlightedNode = state.currentNode.children[state.currentChildIndex];
 
-  // move down tree
-  state.currentNode = state.currentNode.children[state.currentChildIndex];
-  state.currentChildIndex = 0;
-
-  // if leaf node, then click
-  if (state.currentNode.children.length === 0) {
-    state.currentNode.element.click();
+  if (currentlyHighlightedNode.children.length === 0) {
+    // Click but don't make it the current node
+    currentlyHighlightedNode.element.click();
   } else {
+    state.currentNode = state.currentNode.children[state.currentChildIndex];
+    state.currentChildIndex = 0;
     const elementToHighlight = state.currentNode.children[0].element;
     highlight(elementToHighlight);
   }
+  // console.log('SELECT');
+  // if (state.currentNode.children.length === 0) {
+  //   return;
+  // }
+  //
+  // // move down tree
+  // state.currentNode = state.currentNode.children[state.currentChildIndex];
+  // state.currentChildIndex = 0;
+  //
+  // // if leaf node, then click
+  // if (state.currentNode.children.length === 0) {
+  //   state.currentNode.element.click();
+  // } else {
+  //   const elementToHighlight = state.currentNode.children[0].element;
+  //   highlight(elementToHighlight);
+  // }
 });
 
 TreeNavigation.ports.next.subscribe((time) => {
