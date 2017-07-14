@@ -26,7 +26,7 @@ state = {
 console.log(state.currentNode);
 
 TreeNavigation.ports.select.subscribe((time) => {
-  console.log('ENTER');
+  console.log('SELECT');
   if (state.currentNode.children.length === 0) {
     return;
   }
@@ -45,17 +45,29 @@ TreeNavigation.ports.select.subscribe((time) => {
 });
 
 TreeNavigation.ports.next.subscribe((time) => {
-  console.log('TAB');
+  console.log('NEXT');
   // increment currentChildIndex and remove highlight
   state.currentChildIndex = (state.currentChildIndex + 1) % state.currentNode.children.length;
   const elementToHighlight = state.currentNode.children[state.currentChildIndex].element;
   highlight(elementToHighlight);
   console.log(state.currentNode.children[state.currentChildIndex]);
+});
 
+TreeNavigation.ports.previous.subscribe((time) => {
+  console.log('PREVIOUS');
+  // decrement currentChildIndex and remove highlight
+  state.currentChildIndex = (state.currentChildIndex - 1);
+  if (state.currentChildIndex < 0) {
+    state.currentChildIndex = state.currentNode.children.length - 1
+  }
+
+  const elementToHighlight = state.currentNode.children[state.currentChildIndex].element;
+  highlight(elementToHighlight);
+  // console.log(state.currentNode.children[state.currentChildIndex]);
 });
 
 TreeNavigation.ports.up.subscribe((x) => {
-  console.log('SHIFT + TAB');
+  console.log('UP');
   if (state.currentNode.parent) {
     state.currentChildIndex = 0;
     state.currentNode = state.currentNode.parent;

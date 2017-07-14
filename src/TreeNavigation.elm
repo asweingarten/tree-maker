@@ -64,8 +64,10 @@ update msg model =
         -- If shift is down, then make sure you do the right thing
         (9, False) -> (model, Ports.next 1)
         (9, True) -> (model, Ports.up 1)
-        (96, _) -> (model, Ports.up 1) -- ` for ps4 support
+        (192, _) -> (model, Ports.up 1) -- ` for ps4 support
         (16, _) -> ({ model | isShiftDown = True }, Cmd.none)
+        -- Backspace
+        (8, _) -> (model, Ports.previous 1)
         _ -> (model, Cmd.none)
     KeyUpMsg code ->
       case code of
@@ -82,6 +84,7 @@ update msg model =
             "Up" -> Ports.up 1
             "Select" -> Ports.select 1
             "Next" -> Ports.next 1
+            "Previous" -> Ports.previous 1
             _ -> Cmd.none
       in
       (model, cmd)
