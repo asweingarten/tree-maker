@@ -109,8 +109,8 @@ TreeNavigation.ports.scrollIntoView.subscribe(isTall => {
 
 
 // MUTATIONS
-
-const mutationObserver = new MutationObserver(onMutation);
+const debouncedOnMutation = _.debounce(onMutation, 100)
+const mutationObserver = new MutationObserver(debouncedOnMutation);
   // (mutationRecords, observer) => { console.log(mutationRecords);}
 // );
 
