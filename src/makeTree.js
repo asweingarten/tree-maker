@@ -17,7 +17,10 @@ function makeTree(element, parent) {
     return node
   }
 
-  // const geometry = element.getBoundingClientRect();
+  const geometry = element.getBoundingClientRect();
+  if (isOffScreen(node)) {
+    return null;
+  }
   // if (geometry.height === 0 || geometry.width === 0) {
   //   console.log(`SKIPPING: ${element.id} ${geometry}`)
   //   return null;
@@ -56,6 +59,16 @@ function makeTree(element, parent) {
   // else return
   node.children = subRegions;
   return node;
+
+}
+
+function isOffScreen(node) {
+  const el = node.element;
+  const geometry = el.getBoundingClientRect();
+  return (
+    geometry.left + geometry.width <= 0
+    || geometry.right < 0
+  );
 
 }
 
