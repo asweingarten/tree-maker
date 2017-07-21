@@ -3,9 +3,10 @@ module TreeNavigation exposing (..)
 import Html exposing (..)
 import Html.Attributes exposing (style, id)
 import Keyboard
-import Debug exposing (log)
+import Window exposing (resizes, Size)
 
-import Types exposing(Geometry)
+import Model exposing (..)
+import Update
 import Ports exposing (..)
 
 -- TODO
@@ -27,67 +28,12 @@ import Ports exposing (..)
 
 main =
   Html.program
-  { init = init
+  { init = Model.init
   , view = view
-  , update = update
+  , update = Update.update
   , subscriptions = subscriptions
   }
 
--- MODEL
-type alias Model =
-  { index : Int
-  , highlightGeometry: Geometry
-  , isShiftDown : Bool
-  }
-
-init : (Model, Cmd Msg)
-init =
-  (Model -1 { x = 0, y = 0, width = 0, height = 0} False, Cmd.none)
-
-
--- UPDATE
-type Msg
-  = KeyDownMsg Keyboard.KeyCode
-  | KeyUpMsg Keyboard.KeyCode
-  | Highlight Geometry
-  | External String
-
-update : Msg -> Model -> (Model, Cmd Msg)
-update msg model =
-  case msg of
-    KeyDownMsg code ->
-      let _ = log "keycode" code
-      in
-      case (code, model.isShiftDown) of
-        -- Enter
-        (13, _) -> (model, Ports.select 1)
-        -- If shift is down, then make sure you do the right thing
-        (9, False) -> (model, Ports.next 1)
-        (9, True) -> (model, Ports.up 1)
-        (192, _) -> (model, Ports.up 1) -- ` for ps4 support
-        (16, _) -> ({ model | isShiftDown = True }, Cmd.none)
-        -- Backspace
-        (8, _) -> (model, Ports.previous 1)
-        _ -> (model, Cmd.none)
-    KeyUpMsg code ->
-      case code of
-        16 -> ({ model | isShiftDown = False }, Cmd.none)
-        _ -> (model, Cmd.none)
-    Highlight geometry ->
-      let _ = log "geometry:" geometry
-      in
-      ({ model | highlightGeometry = geometry }, Cmd.none)
-    External cmdString ->
-      let
-        cmd =
-          case cmdString of
-            "Up" -> Ports.up 1
-            "Select" -> Ports.select 1
-            "Next" -> Ports.next 1
-            "Previous" -> Ports.previous 1
-            _ -> Cmd.none
-      in
-      (model, cmd)
 
 -- SUBSCRIPTIONS
 
@@ -96,6 +42,7 @@ subscriptions model =
   Sub.batch
   [ Keyboard.downs KeyDownMsg
   , Keyboard.ups KeyUpMsg
+  , resizes WindowResize
   , Ports.highlight Highlight
   , Ports.receiveExternalCmd External
   ]

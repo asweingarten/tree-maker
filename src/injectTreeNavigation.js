@@ -97,6 +97,19 @@ function highlight(element) {
   });
 }
 
+// SCROLLING
+TreeNavigation.ports.scrollIntoView.subscribe(isTall => {
+  console.log("SCROLL TIME");
+  const regionInFocus = state.currentNode.children[state.currentChildIndex].element;
+  regionInFocus.scrollIntoView(isTall)
+  if (isTall) {
+    window.scrollBy(0, -100);
+  }
+});
+
+
+// MUTATIONS
+
 const mutationObserver = new MutationObserver(onMutation);
   // (mutationRecords, observer) => { console.log(mutationRecords);}
 // );
