@@ -23,48 +23,42 @@ state = {
   currentChildIndex: -1,
 }
 
+next();
+
 console.log(state.currentNode);
 
-TreeNavigation.ports.select.subscribe((time) => {
+TreeNavigation.ports.select.subscribe(select);
+TreeNavigation.ports.next.subscribe(next)
+TreeNavigation.ports.previous.subscribe(previous)
+TreeNavigation.ports.up.subscribe(up);
+
+function select(foo) {
   const currentlyHighlightedNode = state.currentNode.children[state.currentChildIndex];
 
   if (currentlyHighlightedNode.children.length === 0) {
     // Click but don't make it the current node
     currentlyHighlightedNode.element.click();
+  } else if (currentlyHighlightedNode.children.length === 1) {
+    currentlyHighlightedNode.children[0].element.click();
   } else {
     state.currentNode = state.currentNode.children[state.currentChildIndex];
     state.currentChildIndex = 0;
     const elementToHighlight = state.currentNode.children[0].element;
     highlight(elementToHighlight);
   }
-  // console.log('SELECT');
-  // if (state.currentNode.children.length === 0) {
-  //   return;
-  // }
-  //
-  // // move down tree
-  // state.currentNode = state.currentNode.children[state.currentChildIndex];
-  // state.currentChildIndex = 0;
-  //
-  // // if leaf node, then click
-  // if (state.currentNode.children.length === 0) {
-  //   state.currentNode.element.click();
-  // } else {
-  //   const elementToHighlight = state.currentNode.children[0].element;
-  //   highlight(elementToHighlight);
-  // }
-});
+}
 
-TreeNavigation.ports.next.subscribe((time) => {
+function next(foo) {
   console.log('NEXT');
   // increment currentChildIndex and remove highlight
   state.currentChildIndex = (state.currentChildIndex + 1) % state.currentNode.children.length;
   const elementToHighlight = state.currentNode.children[state.currentChildIndex].element;
+  elementToHighlight.focus();
   highlight(elementToHighlight);
   console.log(state.currentNode.children[state.currentChildIndex]);
-});
+}
 
-TreeNavigation.ports.previous.subscribe((time) => {
+function previous(foo) {
   console.log('PREVIOUS');
   // decrement currentChildIndex and remove highlight
   state.currentChildIndex = (state.currentChildIndex - 1);
@@ -73,18 +67,19 @@ TreeNavigation.ports.previous.subscribe((time) => {
   }
 
   const elementToHighlight = state.currentNode.children[state.currentChildIndex].element;
+  elementToHighlight.focus();
   highlight(elementToHighlight);
   // console.log(state.currentNode.children[state.currentChildIndex]);
-});
+}
 
-TreeNavigation.ports.up.subscribe((x) => {
+function up(foo) {
   console.log('UP');
   if (state.currentNode.parent) {
     state.currentChildIndex = 0;
     state.currentNode = state.currentNode.parent;
     highlight(state.currentNode.children[state.currentChildIndex].element)
   }
-});
+}
 
 function highlight(element) {
   const boundingBox = element.getBoundingClientRect();
@@ -111,16 +106,10 @@ TreeNavigation.ports.scrollIntoView.subscribe(isTall => {
 // MUTATIONS
 const debouncedOnMutation = _.debounce(onMutation, 100)
 const mutationObserver = new MutationObserver(debouncedOnMutation);
-  // (mutationRecords, observer) => { console.log(mutationRecords);}
-// );
 
 mutationObserver.observe(document.body, {
   childList: true,
-  // attributes: true,
-  // characterData: true,
   subtree: true,
-  // attributeOldValue: true,
-
 })
 
 // Data race with key presses....
