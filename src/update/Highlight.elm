@@ -6,13 +6,18 @@ import Debug exposing (log)
 import Model exposing (..)
 import Ports
 
-update: Model -> Geometry -> (Model, Cmd Msg)
-update model geometry =
+update: Model -> HighlightData -> (Model, Cmd Msg)
+update model {activeRegion, childRegions, siblingRegions} =
   let
-    _ = log "geometry:" geometry
-    cmd = scrollCommand geometry model.viewportSize
+    -- _ = log "geometry:" geometry
+    cmd = scrollCommand activeRegion model.viewportSize
   in
-  ({ model | highlightGeometry = geometry }, cmd)
+  ({ model
+  | activeRegion   = activeRegion
+  , childRegions   = childRegions
+  , siblingRegions = siblingRegions
+  }
+  , cmd)
 
 
 scrollCommand : Geometry -> Size -> Cmd Msg

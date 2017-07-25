@@ -48,13 +48,22 @@ subscriptions model =
   ]
 
 view : Model -> Html Msg
-view {index, highlightGeometry}  =
+view {index, activeRegion, siblingRegions, childRegions}  =
   let
-    x = toPixel highlightGeometry.x
-    y = toPixel <| max highlightGeometry.y 0
+    activeRegionHighlight = highlight "solid salmon" activeRegion
+    childrenHighlights = List.map (highlight "dashed blue") childRegions
+    siblingHighlights = List.map (highlight "dashed green") siblingRegions
+  in
+  div [] ([activeRegionHighlight] ++ childrenHighlights ++ siblingHighlights)
+
+highlight : String -> Geometry -> Html Msg
+highlight borderStyle geometry =
+  let
+    x = toPixel geometry.x
+    y = toPixel <| max geometry.y 0
     borderWidth = 3
-    width = toPixel  <| highlightGeometry.width - 2*borderWidth
-    height = toPixel <| highlightGeometry.height - 2*borderWidth
+    width = toPixel  <| geometry.width - 2*borderWidth
+    height = toPixel <| geometry.height - 2*borderWidth
     myStyle =
       style
         [ ("position", "fixed")
@@ -62,13 +71,13 @@ view {index, highlightGeometry}  =
         , ("top", y)
         , ("width", width)
         , ("height", height)
-        , ("border", "3px solid salmon")
+        , ("border", "3px " ++ borderStyle)
         , ("border-radius", "3px")
         , ("z-index", "2000000001")
         , ("pointer-events", "none")
         ]
   in
-  div [myStyle, id "my-highlight"] []
+  div [myStyle] []
 
 toPixel : Int -> String
 toPixel num =

@@ -4,6 +4,12 @@ import Keyboard
 import Window exposing (Size)
 import Task
 
+type alias HighlightData =
+  { activeRegion : Geometry
+  , childRegions: List Geometry
+  , siblingRegions: List Geometry
+  }
+
 type alias Geometry =
   { x: Int
   , y: Int
@@ -13,7 +19,9 @@ type alias Geometry =
 
 type alias Model =
   { index : Int
-  , highlightGeometry: Geometry
+  , activeRegion: Geometry
+  , siblingRegions: List Geometry
+  , childRegions: List Geometry
   , isShiftDown : Bool
   , viewportSize : Size
   }
@@ -23,6 +31,8 @@ init =
   (Model
     -1
     { x = 0, y = 0, width = 0, height = 0}
+    []
+    []
     False
     (Size 0 0)
   , Task.perform WindowResize Window.size)
@@ -30,6 +40,6 @@ init =
 type Msg
   = KeyDownMsg Keyboard.KeyCode
   | KeyUpMsg Keyboard.KeyCode
-  | Highlight Geometry
+  | Highlight HighlightData
   | WindowResize Size
   | External String

@@ -16,8 +16,8 @@ update msg model =
       case code of
         16 -> ({ model | isShiftDown = False }, Cmd.none)
         _ -> (model, Cmd.none)
-    Highlight geometry ->
-      Highlight.update model geometry
+    Highlight highlightData ->
+      Highlight.update model highlightData
     WindowResize size ->
       ({ model | viewportSize = size }, Cmd.none)
     External cmdString ->

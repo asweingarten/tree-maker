@@ -43,8 +43,7 @@ function select(foo) {
   } else {
     state.currentNode = state.currentNode.children[state.currentChildIndex];
     state.currentChildIndex = 0;
-    const elementToHighlight = state.currentNode.children[0].element;
-    highlight(elementToHighlight);
+    highlight(state.currentNode.children[0]);
   }
 }
 
@@ -52,10 +51,10 @@ function next(foo) {
   console.log('NEXT');
   // increment currentChildIndex and remove highlight
   state.currentChildIndex = (state.currentChildIndex + 1) % state.currentNode.children.length;
-  const elementToHighlight = state.currentNode.children[state.currentChildIndex].element;
-  elementToHighlight.focus();
-  highlight(elementToHighlight);
-  console.log(state.currentNode.children[state.currentChildIndex]);
+  const elementToFocus = state.currentNode.children[state.currentChildIndex].element;
+  elementToFocus.focus();
+  highlight(state.currentNode.children[state.currentChildIndex]);
+  // console.log(state.currentNode.children[state.currentChildIndex]);
 }
 
 function previous(foo) {
@@ -66,10 +65,9 @@ function previous(foo) {
     state.currentChildIndex = state.currentNode.children.length - 1
   }
 
-  const elementToHighlight = state.currentNode.children[state.currentChildIndex].element;
-  elementToHighlight.focus();
+  const elementToFocus = state.currentNode.children[state.currentChildIndex].element;
+  elementToFocus.focus();
   highlight(elementToHighlight);
-  // console.log(state.currentNode.children[state.currentChildIndex]);
 }
 
 function up(foo) {
@@ -77,19 +75,32 @@ function up(foo) {
   if (state.currentNode.parent) {
     state.currentChildIndex = 0;
     state.currentNode = state.currentNode.parent;
-    highlight(state.currentNode.children[state.currentChildIndex].element)
+    highlight(state.currentNode.children[state.currentChildIndex])
   }
 }
 
-function highlight(element) {
-  const boundingBox = element.getBoundingClientRect();
-  console.log(boundingBox);
+function highlight(activeNode) {
+  const activeRegion = computeGeometry(activeNode.element);
+  const childRegions = activeNode.children.map(c => computeGeometry(c.element));
+  const siblingRegions = !activeNode.parent ? [] : activeNode.parent.children
+    .map(c => computeGeometry(c.element))
+    .filter(x => !_.isEqual(x, activeRegion));
   TreeNavigation.ports.highlight.send({
+    activeRegion,
+    childRegions,
+    siblingRegions
+  });
+}
+
+function computeGeometry(element) {
+  const boundingBox = element.getBoundingClientRect();
+  return {
     x: ~~boundingBox.left,
     y: ~~boundingBox.top,
     width: ~~element.offsetWidth,
     height: ~~element.offsetHeight
-  });
+  };
+
 }
 
 // SCROLLING
@@ -122,13 +133,13 @@ function onMutation(mutationRecords, observer) {
   if (!equivNode) {
     state.currentNode = newTree;
     state.currentChildIndex = 0;
-    highlight(state.currentNode.children[state.currentChildIndex].element);
+    highlight(state.currentNode.children[state.currentChildIndex]);
   } else {
     state.currentNode = equivNode;
     if (state.currentNode.children.length === 0) {
-      highlight(state.currentNode.element);
+      highlight(state.currentNode);
     } else {
-      highlight(state.currentNode.children[state.currentChildIndex].element);
+      highlight(state.currentNode.children[state.currentChildIndex]);
     }
   }
 
