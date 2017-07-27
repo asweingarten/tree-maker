@@ -1,12 +1,12 @@
 module TreeNavigation exposing (..)
 
-import Html exposing (..)
-import Html.Attributes exposing (style, id)
+
 import Keyboard
 import Window exposing (resizes, Size)
 
 import Model exposing (..)
 import Update
+import View
 import Ports exposing (..)
 
 -- TODO
@@ -29,11 +29,10 @@ import Ports exposing (..)
 main =
   Html.program
   { init = Model.init
-  , view = view
+  , view = View.view
   , update = Update.update
   , subscriptions = subscriptions
   }
-
 
 -- SUBSCRIPTIONS
 
@@ -46,39 +45,3 @@ subscriptions model =
   , Ports.highlight Highlight
   , Ports.receiveExternalCmd External
   ]
-
-view : Model -> Html Msg
-view {index, activeRegion, siblingRegions, childRegions}  =
-  let
-    activeRegionHighlight = highlight "solid salmon" activeRegion
-    childrenHighlights = List.map (highlight "dashed blue") childRegions
-    siblingHighlights = List.map (highlight "dashed green") siblingRegions
-  in
-  div [] ([activeRegionHighlight] ++ childrenHighlights ++ siblingHighlights)
-
-highlight : String -> Geometry -> Html Msg
-highlight borderStyle geometry =
-  let
-    x = toPixel geometry.x
-    y = toPixel <| max geometry.y 0
-    borderWidth = 3
-    width = toPixel  <| geometry.width - 2*borderWidth
-    height = toPixel <| geometry.height - 2*borderWidth
-    myStyle =
-      style
-        [ ("position", "fixed")
-        , ("left", x)
-        , ("top", y)
-        , ("width", width)
-        , ("height", height)
-        , ("border", "3px " ++ borderStyle)
-        , ("border-radius", "3px")
-        , ("z-index", "2000000001")
-        , ("pointer-events", "none")
-        ]
-  in
-  div [myStyle] []
-
-toPixel : Int -> String
-toPixel num =
-  toString num ++ "px"
