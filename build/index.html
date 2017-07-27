@@ -35,8 +35,6 @@
     </style>
   </head>
   <body>
-    <div id="elm"></div>
-
     <div class="div" id="div1">
       <ul class="ul1">
         <li><a href="">Pick me!</a></li>
@@ -70,55 +68,8 @@
       </ul>
     </div>
   </body>
-  <script src="./ports.js"></script>
+  <script src="./lodash.custom.min.js"></script>
+  <script src="./treeNav.js"></script>
   <script src="./makeTree.js"></script>
-  <script>
-    const div = document.getElementById('elm');
-    const app = Elm.TreeNavigation.embed(div);
-
-    document.onkeydown = (e) => {
-      if (e.key === 'Tab' || e.key === 'Enter') {
-        e.preventDefault();
-      }
-    }
-
-    var state = {
-      currentNode: makeTree(document.body),
-      currentChildIndex: -1,
-    }
-
-    app.ports.select.subscribe((time) => {
-      console.log('ENTER');
-      // move down tree
-      state.currentNode = state.currentNode.children[state.currentChildIndex];
-      state.currentChildIndex = 0;
-
-      // if leaf node, then click
-      if (state.currentNode.children.length === 0) {
-
-      } else {
-        const elementToHighlight = state.currentNode.children[0].element;
-        highlight(elementToHighlight);
-      }
-    });
-    app.ports.next.subscribe((time) => {
-      console.log('TAB');
-      // increment currentChildIndex and remove highlight
-      state.currentChildIndex = (state.currentChildIndex + 1) % state.currentNode.children.length;
-      const elementToHighlight = state.currentNode.children[state.currentChildIndex].element;
-      highlight(elementToHighlight);
-
-    });
-
-    function highlight(element) {
-      const boundingBox = element.getBoundingClientRect();
-      console.log(boundingBox);
-      app.ports.highlight.send({
-        x: ~~boundingBox.left,
-        y: ~~boundingBox.top,
-        width: ~~element.offsetWidth,
-        height: ~~element.offsetHeight
-      });
-    }
-  </script>
+  <script src="./injectTreeNavigation.js"></script>
 </html>
