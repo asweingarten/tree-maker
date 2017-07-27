@@ -4,7 +4,7 @@ import Debug exposing (log)
 
 import Model exposing (..)
 import KeyDown
-import Highlight
+import Regions
 import Ports
 
 update : Msg -> Model -> (Model, Cmd Msg)
@@ -16,10 +16,12 @@ update msg model =
       case code of
         16 -> ({ model | isShiftDown = False }, Cmd.none)
         _ -> (model, Cmd.none)
-    Highlight highlightData ->
-      Highlight.update model highlightData
+    Regions regionData ->
+      Regions.update model regionData
     WindowResize size ->
       ({ model | viewportSize = size }, Cmd.none)
+    Scan time ->
+      (model, Ports.next 1)
     External cmdString ->
       let
         cmd =

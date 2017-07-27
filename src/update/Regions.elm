@@ -1,24 +1,28 @@
-module Highlight exposing (..)
+module Regions exposing (..)
 
 import Window exposing (Size)
 import Debug exposing (log)
 
 import Model exposing (..)
 import Ports
+import ScanState
 
-update: Model -> HighlightData -> (Model, Cmd Msg)
-update model {activeRegion, childRegions, siblingRegions} =
+update: Model -> RegionData -> (Model, Cmd Msg)
+update model regionData =
   let
-    -- _ = log "geometry:" geometry
-    cmd = scrollCommand activeRegion model.viewportSize
+    cmd = scrollCommand regionData.activeRegion model.viewportSize
+    newScanState =
+      case model.scanningSettings.isOn of
+        True -> ScanState.update model.scanState regionData
+        False -> model.scanState
   in
   ({ model
-  | activeRegion   = activeRegion
-  , childRegions   = childRegions
-  , siblingRegions = siblingRegions
+  | activeRegion   = regionData.activeRegion
+  , childRegions   = regionData.childRegions
+  , siblingRegions = regionData.siblingRegions
+  , scanState      = newScanState
   }
   , cmd)
-
 
 scrollCommand : Geometry -> Size -> Cmd Msg
 scrollCommand geometry viewportSize =

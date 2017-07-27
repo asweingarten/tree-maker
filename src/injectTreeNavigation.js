@@ -1,3 +1,11 @@
+const Actions = {
+  UP: 'UP',
+  NEXT: 'NEXT',
+  PREVIOUS: 'PREVIOUS',
+  SELECT: 'SELECT',
+  NOOP: 'NO-OP'
+}
+
 const treeNavDiv = document.createElement('div');
 treeNavDiv.id = 'tree-navigation';
 treeNavDiv.style.position  ='fixed';
@@ -19,11 +27,15 @@ document.onkeydown = (e) => {
 }
 
 state = {
-  currentNode: makeTree(document.body),
-  currentChildIndex: -1,
+  currentNode: {
+    parent: undefined,
+    children: [makeTree(document.body)],
+    element: document.body
+  },
+  currentChildIndex: 0,
 }
 
-next();
+select();
 
 console.log(state.currentNode);
 
@@ -43,7 +55,7 @@ function select(foo) {
   } else {
     state.currentNode = state.currentNode.children[state.currentChildIndex];
     state.currentChildIndex = 0;
-    highlight(state.currentNode.children[0]);
+    highlight(Actions.SELECT, state.currentNode.children[0]);
   }
 }
 
@@ -53,7 +65,7 @@ function next(foo) {
   state.currentChildIndex = (state.currentChildIndex + 1) % state.currentNode.children.length;
   const elementToFocus = state.currentNode.children[state.currentChildIndex].element;
   elementToFocus.focus();
-  highlight(state.currentNode.children[state.currentChildIndex]);
+  highlight(Actions.NEXT, state.currentNode.children[state.currentChildIndex]);
   // console.log(state.currentNode.children[state.currentChildIndex]);
 }
 
@@ -67,7 +79,7 @@ function previous(foo) {
 
   const elementToFocus = state.currentNode.children[state.currentChildIndex].element;
   elementToFocus.focus();
-  highlight(elementToHighlight);
+  highlight(Actions.PREVIOUS, elementToHighlight);
 }
 
 function up(foo) {
@@ -75,17 +87,18 @@ function up(foo) {
   if (state.currentNode.parent) {
     state.currentChildIndex = 0;
     state.currentNode = state.currentNode.parent;
-    highlight(state.currentNode.children[state.currentChildIndex])
+    highlight(Actions.UP, state.currentNode.children[state.currentChildIndex])
   }
 }
 
-function highlight(activeNode) {
+function highlight(action, activeNode) {
   const activeRegion = computeGeometry(activeNode.element);
   const childRegions = activeNode.children.map(c => computeGeometry(c.element));
   const siblingRegions = !activeNode.parent ? [] : activeNode.parent.children
     .map(c => computeGeometry(c.element))
     .filter(x => !_.isEqual(x, activeRegion));
-  TreeNavigation.ports.highlight.send({
+  TreeNavigation.ports.regions.send({
+    action,
     activeRegion,
     childRegions,
     siblingRegions
@@ -133,13 +146,13 @@ function onMutation(mutationRecords, observer) {
   if (!equivNode) {
     state.currentNode = newTree;
     state.currentChildIndex = 0;
-    highlight(state.currentNode.children[state.currentChildIndex]);
+    highlight(Actions.SELECT, state.currentNode.children[state.currentChildIndex]);
   } else {
     state.currentNode = equivNode;
     if (state.currentNode.children.length === 0) {
-      highlight(state.currentNode);
+      highlight(Actions.NOOP, state.currentNode);
     } else {
-      highlight(state.currentNode.children[state.currentChildIndex]);
+      highlight(Actions.NOOP, state.currentNode.children[state.currentChildIndex]);
     }
   }
 

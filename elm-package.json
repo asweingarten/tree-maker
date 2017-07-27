@@ -8,6 +8,7 @@
         "src",
         "src/model",
         "src/update",
+        "src/update/ScanState",
         "src/view"
     ],
     "exposed-modules": [],

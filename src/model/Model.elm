@@ -3,11 +3,25 @@ module Model exposing (..)
 import Keyboard
 import Window exposing (Size)
 import Task
+import Time exposing (Time)
 
-type alias HighlightData =
+type alias ScanningSettings =
+  { isOn: Bool
+  , interval: Float -- in milliseconds
+  , loops: Int
+  }
+
+type alias ScanState =
+  { loops: Int
+  , scanIndex: Int
+  , elementsToScan: Int
+  }
+
+type alias RegionData =
   { activeRegion : Geometry
   , childRegions: List Geometry
   , siblingRegions: List Geometry
+  , action: String
   }
 
 type alias Geometry =
@@ -24,6 +38,8 @@ type alias Model =
   , childRegions: List Geometry
   , isShiftDown : Bool
   , viewportSize : Size
+  , scanningSettings: ScanningSettings
+  , scanState: ScanState
   }
 
 init : (Model, Cmd Msg)
@@ -35,11 +51,21 @@ init =
     []
     False
     (Size 0 0)
+    (ScanningSettings True 1000 2)
+    (ScanState 0 0 0)
   , Task.perform WindowResize Window.size)
 
 type Msg
   = KeyDownMsg Keyboard.KeyCode
   | KeyUpMsg Keyboard.KeyCode
-  | Highlight HighlightData
+  | Regions RegionData
   | WindowResize Size
+  | Scan Time
   | External String
+
+type Action
+  = Select
+  | Next
+  | Previous
+  | Up
+  | Noop

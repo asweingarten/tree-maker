@@ -10,6 +10,6 @@ port up : Int -> Cmd msg
 
 port scrollIntoView : Bool -> Cmd msg
 
-port highlight : (HighlightData -> msg) -> Sub msg
+port regions : (RegionData -> msg) -> Sub msg
 
 port receiveExternalCmd : (String -> msg) -> Sub msg
