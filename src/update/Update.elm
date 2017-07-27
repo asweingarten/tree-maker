@@ -25,10 +25,10 @@ update msg model =
       in
       case msg of
         Scan time -> (model, Ports.next 1)
-        Pause x ->
+        Pause _ ->
           ({model | scanningSettings = {scanningSettings | isOn = False}}
           , Cmd.none)
-        Resume x ->
+        Resume _ ->
           ({model | scanningSettings = {scanningSettings | isOn = True}}
           , Cmd.none)
     External cmdString ->

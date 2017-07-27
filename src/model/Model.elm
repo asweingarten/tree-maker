@@ -51,7 +51,7 @@ init =
     []
     False
     (Size 0 0)
-    (ScanningSettings True 1000 2)
+    (ScanningSettings False 1000 2)
     (ScanState 0 0 0)
   , Task.perform WindowResize Window.size)
 
