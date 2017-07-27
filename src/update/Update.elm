@@ -20,8 +20,17 @@ update msg model =
       Regions.update model regionData
     WindowResize size ->
       ({ model | viewportSize = size }, Cmd.none)
-    Scan time ->
-      (model, Ports.next 1)
+    Scanning msg ->
+      let scanningSettings = model.scanningSettings
+      in
+      case msg of
+        Scan time -> (model, Ports.next 1)
+        Pause x ->
+          ({model | scanningSettings = {scanningSettings | isOn = False}}
+          , Cmd.none)
+        Resume x ->
+          ({model | scanningSettings = {scanningSettings | isOn = True}}
+          , Cmd.none)
     External cmdString ->
       let
         cmd =

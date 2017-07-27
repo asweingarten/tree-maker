@@ -60,8 +60,13 @@ type Msg
   | KeyUpMsg Keyboard.KeyCode
   | Regions RegionData
   | WindowResize Size
-  | Scan Time
+  | Scanning ScanMsg
   | External String
+
+type ScanMsg
+  = Scan Time
+  | Pause String
+  | Resume String
 
 type Action
   = Select

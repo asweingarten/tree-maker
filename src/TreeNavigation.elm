@@ -3,6 +3,8 @@ module TreeNavigation exposing (..)
 import Html
 import Keyboard
 import Window exposing (resizes, Size)
+import Json.Encode exposing (Value)
+import Json.Decode as Decode
 
 import Model exposing (..)
 import Update
@@ -12,8 +14,6 @@ import Time exposing (every, millisecond)
 
 {- TODO
 -- Scanning
-  - set loop timeout
-    - keep track of how many scans makes up a loop
   - stop scanning while entering a command
   - afford configuration of all of this
 -- Ignore own DOM mutations
@@ -42,6 +42,8 @@ subscriptions model =
   , Keyboard.ups KeyUpMsg
   , resizes WindowResize
   , Ports.regions Regions
+  , Ports.pauseScanning (\x -> Scanning <| Pause x)
+  , Ports.resumeScanning (\x -> Scanning <| Resume x)
   , Ports.receiveExternalCmd External
   , scanSubscription model.scanningSettings model.scanState
   ]
@@ -49,5 +51,5 @@ subscriptions model =
 scanSubscription : ScanningSettings -> ScanState -> Sub Msg
 scanSubscription settings scanState =
   case settings.isOn && (settings.loops > scanState.loops) of
-    True  -> every (settings.interval * millisecond) Scan
+    True  -> every (settings.interval * millisecond) (\x -> Scanning <| Scan x)
     False -> Sub.none

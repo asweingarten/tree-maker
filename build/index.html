@@ -67,9 +67,25 @@
         <li><a href="">Pick me!</a></li>
       </ul>
     </div>
+    <button onclick="startScanning()">Start Scanning</button>
+    <button onclick="pauseScanning()">Pause Scanning</button>
+    <button onclick="select()">Select</button>
   </body>
   <script src="./lodash.custom.min.js"></script>
   <script src="./treeNav.js"></script>
   <script src="./makeTree.js"></script>
   <script src="./injectTreeNavigation.js"></script>
+  <script>
+    function startScanning() {
+      TreeNavigation.ports.resumeScanning.send("x");
+    }
+
+    function pauseScanning() {
+      TreeNavigation.ports.pauseScanning.send("x");
+    }
+
+    function select() {
+      TreeNavigation.ports.receiveExternalCmd.send("Select");
+    }
+  </script>
 </html>
