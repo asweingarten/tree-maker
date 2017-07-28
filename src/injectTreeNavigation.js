@@ -39,13 +39,25 @@ select();
 
 console.log(state.currentNode);
 
+// MUTATIONS
+const debouncedOnMutation = _.debounce(onMutation, 100)
+const mutationObserver = new MutationObserver(debouncedOnMutation);
+
+mutationObserver.observe(document.body, {
+  childList: true,
+  subtree: true,
+})
+
 TreeNavigation.ports.select.subscribe(select);
 TreeNavigation.ports.next.subscribe(next)
 TreeNavigation.ports.previous.subscribe(previous)
 TreeNavigation.ports.up.subscribe(up);
 
 function select(foo) {
+  if (!state) return;
+
   const currentlyHighlightedNode = state.currentNode.children[state.currentChildIndex];
+  if (!currentlyHighlightedNode) return;
 
   if (currentlyHighlightedNode.children.length === 0) {
     // Click but don't make it the current node
@@ -127,14 +139,7 @@ TreeNavigation.ports.scrollIntoView.subscribe(isTall => {
 });
 
 
-// MUTATIONS
-const debouncedOnMutation = _.debounce(onMutation, 100)
-const mutationObserver = new MutationObserver(debouncedOnMutation);
 
-mutationObserver.observe(document.body, {
-  childList: true,
-  subtree: true,
-})
 
 // Data race with key presses....
 function onMutation(mutationRecords, observer) {
