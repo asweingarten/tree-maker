@@ -8,11 +8,13 @@ import Model exposing (..)
 view : Model -> Html Msg
 view {index, activeRegion, siblingRegions, childRegions}  =
   let
-    activeRegionHighlight = highlight "3px solid salmon" activeRegion
-    childrenHighlights = List.map (highlight "2px dashed blue") childRegions
-    siblingHighlights = List.map (highlight "2px dashed green") siblingRegions
+    activeRegionHighlight = highlight "3px solid orangered" activeRegion
+    -- childrenHighlights = List.map (highlight "2px dashed lightsteelblue") childRegions
+    siblingHighlights = List.map (highlight "2px dashed mediumaquamarine") siblingRegions
   in
-  div [] ([activeRegionHighlight] ++ childrenHighlights ++ siblingHighlights)
+  div [] ([activeRegionHighlight]
+    -- ++ childrenHighlights
+    ++ siblingHighlights)
 
 highlight : String -> Geometry -> Html Msg
 highlight borderStyle geometry =
