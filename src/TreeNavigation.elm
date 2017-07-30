@@ -14,8 +14,8 @@ import Time exposing (every, millisecond)
 
 {- TODO
 -- Scanning
-  - stop scanning while entering a command
   - afford configuration of all of this
+  - ScanState update should happen on Scan. Receiving regions should only set the scan cursor dimensions
 -- Ignore own DOM mutations
 -- Error recovery, refresh the page on error
 
@@ -45,11 +45,11 @@ subscriptions model =
   , Ports.pauseScanning (\x -> Scanning <| Pause x)
   , Ports.resumeScanning (\x -> Scanning <| Resume x)
   , Ports.receiveExternalCmd External
-  , scanSubscription model.scanningSettings model.scanState
+  , scanSubscription model.scan
   ]
 
-scanSubscription : ScanningSettings -> ScanState -> Sub Msg
-scanSubscription settings scanState =
-  case settings.isOn && (settings.loops > scanState.loops) of
-    True  -> every (settings.interval * millisecond) (\x -> Scanning <| Scan x)
+scanSubscription : ScanState -> Sub Msg
+scanSubscription  scan =
+  case (not scan.isPaused) && (scan.settings.loops > scan.loops) of
+    True  -> every (scan.settings.interval * millisecond) (\x -> Scanning <| Scan x)
     False -> Sub.none

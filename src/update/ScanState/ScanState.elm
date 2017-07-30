@@ -4,11 +4,13 @@ import Model exposing (..)
 
 update : ScanState -> RegionData -> ScanState
 update scanState regionData =
-  case toAction regionData.action of
+  case regionData.action |> toAction of
     Select ->
-      { loops = 0
+      { scanState
+      | loops = 0
       , scanIndex = 0
       , elementsToScan = 1 + List.length regionData.siblingRegions
+      , isPaused = True
       }
     Next ->
       case (scanState.scanIndex + 1) == scanState.elementsToScan of
@@ -33,9 +35,11 @@ update scanState regionData =
           | scanIndex = scanState.scanIndex - 1
           }
     Up ->
-      { loops = 0
+      { scanState
+      | loops = 0
       , scanIndex = 0
       , elementsToScan = 1 + List.length regionData.siblingRegions
+      , isPaused = True
       }
     Noop -> scanState
 

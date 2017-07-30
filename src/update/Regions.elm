@@ -11,16 +11,16 @@ update: Model -> RegionData -> (Model, Cmd Msg)
 update model regionData =
   let
     cmd = scrollCommand regionData.activeRegion model.viewportSize
-    newScanState =
-      case model.scanningSettings.isOn of
-        True -> ScanState.update model.scanState regionData
-        False -> model.scanState
+    -- newScanState =
+    --   case model.scanningSettings.isOn of
+    --     True -> ScanState.update model.scan regionData
+    --     False -> model.scan
   in
   ({ model
   | activeRegion   = regionData.activeRegion
   , childRegions   = regionData.childRegions
   , siblingRegions = regionData.siblingRegions
-  , scanState      = newScanState
+  -- , scan           = newScanState
   }
   , cmd)
 

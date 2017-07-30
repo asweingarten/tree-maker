@@ -5,16 +5,14 @@ import Window exposing (Size)
 import Task
 import Time exposing (Time)
 
-type alias ScanningSettings =
-  { isOn: Bool
-  , interval: Float -- in milliseconds
-  , loops: Int
-  }
+import ScanningSettings
 
 type alias ScanState =
   { loops: Int
   , scanIndex: Int
   , elementsToScan: Int
+  , isPaused: Bool
+  , settings: ScanningSettings.Model
   }
 
 type alias RegionData =
@@ -38,12 +36,15 @@ type alias Model =
   , childRegions: List Geometry
   , isShiftDown : Bool
   , viewportSize : Size
-  , scanningSettings: ScanningSettings
-  , scanState: ScanState
+  , scanningSettings: ScanningSettings.Model
+  , scan: ScanState
   }
 
 init : (Model, Cmd Msg)
 init =
+  let
+    (scanningSettingsModel, scanningSettingsCmd) = ScanningSettings.init
+  in
   (Model
     -1
     { x = 0, y = 0, width = 0, height = 0}
@@ -51,9 +52,13 @@ init =
     []
     False
     (Size 0 0)
-    (ScanningSettings False 2000 2)
-    (ScanState 0 0 0)
-  , Task.perform WindowResize Window.size)
+    scanningSettingsModel
+    (ScanState 0 0 0 False scanningSettingsModel)
+  , Cmd.batch
+      [ Task.perform WindowResize Window.size
+      , Cmd.map ScanningSettings scanningSettingsCmd
+      ]
+  )
 
 type Msg
   = KeyDownMsg Keyboard.KeyCode
@@ -62,6 +67,7 @@ type Msg
   | WindowResize Size
   | Scanning ScanMsg
   | External String
+  | ScanningSettings ScanningSettings.Msg
 
 type ScanMsg
   = Scan Time

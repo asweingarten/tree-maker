@@ -6,6 +6,8 @@ import Model exposing (..)
 import KeyDown
 import Regions
 import Ports
+import ScanState
+import ScanningSettings
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
@@ -21,16 +23,23 @@ update msg model =
     WindowResize size ->
       ({ model | viewportSize = size }, Cmd.none)
     Scanning msg ->
-      let scanningSettings = model.scanningSettings
+      let scan = model.scan
       in
       case msg of
-        Scan time -> (model, Ports.next 1)
+        Scan time ->
+          -- update scan state
+          (model, Ports.next 1)
         Pause _ ->
-          ({model | scanningSettings = {scanningSettings | isOn = False}}
+          ({model | scan = {scan | isPaused = True}}
           , Cmd.none)
         Resume _ ->
-          ({model | scanningSettings = {scanningSettings | isOn = True}}
+          ({model | scan = {scan | isPaused = False}}
           , Cmd.none)
+    ScanningSettings msg ->
+      let (scanningSettings, cmd) = ScanningSettings.update model.scanningSettings msg
+      in
+      ({ model | scanningSettings = scanningSettings }
+      , Cmd.map ScanningSettings cmd)
     External cmdString ->
       let
         cmd =
