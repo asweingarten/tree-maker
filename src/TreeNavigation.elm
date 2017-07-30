@@ -39,6 +39,7 @@ subscriptions : Model -> Sub Msg
 subscriptions model =
   Sub.batch
   [ Keyboard.downs KeyDownMsg
+  , Keyboard.downs (keyDownSubscription model)
   , Keyboard.ups KeyUpMsg
   , resizes WindowResize
   , Ports.regions Regions
@@ -47,6 +48,13 @@ subscriptions model =
   , Ports.receiveExternalCmd External
   , scanSubscription model.scan
   ]
+
+keyDownSubscription : Model -> Keyboard.KeyCode -> Msg
+keyDownSubscription model keycode =
+  case (keycode, model.page) of
+    (27, Website) -> ChangePage ScanningSettingsPage
+    (27, ScanningSettingsPage) -> ChangePage Website
+    (_,_) -> NoOp
 
 scanSubscription : ScanState -> Sub Msg
 scanSubscription  scan =

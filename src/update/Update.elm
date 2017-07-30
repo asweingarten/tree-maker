@@ -12,6 +12,8 @@ import ScanningSettings
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   case msg of
+    NoOp ->
+      (model, Cmd.none)
     KeyDownMsg code ->
       KeyDown.update model code
     KeyUpMsg code ->
@@ -40,6 +42,8 @@ update msg model =
       in
       ({ model | scanningSettings = scanningSettings }
       , Cmd.map ScanningSettings cmd)
+    ChangePage page ->
+      ({ model | page = page }, Cmd.none)
     External cmdString ->
       let
         cmd =

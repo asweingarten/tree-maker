@@ -38,6 +38,7 @@ type alias Model =
   , viewportSize : Size
   , scanningSettings: ScanningSettings.Model
   , scan: ScanState
+  , page: Page
   }
 
 init : (Model, Cmd Msg)
@@ -54,6 +55,7 @@ init =
     (Size 0 0)
     scanningSettingsModel
     (ScanState 0 0 0 False scanningSettingsModel)
+    Website
   , Cmd.batch
       [ Task.perform WindowResize Window.size
       , Cmd.map ScanningSettings scanningSettingsCmd
@@ -61,13 +63,19 @@ init =
   )
 
 type Msg
-  = KeyDownMsg Keyboard.KeyCode
+  = NoOp
+  | KeyDownMsg Keyboard.KeyCode
   | KeyUpMsg Keyboard.KeyCode
   | Regions RegionData
   | WindowResize Size
   | Scanning ScanMsg
   | External String
   | ScanningSettings ScanningSettings.Msg
+  | ChangePage Page
+
+type Page
+  = Website
+  | ScanningSettingsPage
 
 type ScanMsg
   = Scan Time

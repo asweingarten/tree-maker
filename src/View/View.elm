@@ -4,17 +4,28 @@ import Html exposing (..)
 import Html.Attributes exposing (style, id)
 
 import Model exposing (..)
+import ScanningSettings
 
 view : Model -> Html Msg
-view {index, activeRegion, siblingRegions, childRegions}  =
+view model  =
   let
-    activeRegionHighlight = highlight "3px solid orangered" activeRegion
+    activeRegionHighlight = highlight "3px solid orangered" model.activeRegion
     -- childrenHighlights = List.map (highlight "2px dashed lightsteelblue") childRegions
-    siblingHighlights = List.map (highlight "2px dashed mediumaquamarine") siblingRegions
+    siblingHighlights = List.map (highlight "2px dashed mediumaquamarine") model.siblingRegions
   in
-  div [] ([activeRegionHighlight]
-    -- ++ childrenHighlights
-    ++ siblingHighlights)
+  div []
+    [ div [id "highlights"] ([activeRegionHighlight] ++ siblingHighlights)
+    , page model
+    ]
+
+page : Model -> Html Msg
+page model =
+  case model.page of
+    Website ->
+      div [] []
+    ScanningSettingsPage ->
+      ScanningSettings.view model.scanningSettings |> Html.map ScanningSettings
+
 
 highlight : String -> Geometry -> Html Msg
 highlight borderStyle geometry =

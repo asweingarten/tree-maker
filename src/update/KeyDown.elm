@@ -11,6 +11,8 @@ update model keycode =
   let _ = log "keycode" keycode
   in
   case (keycode, model.isShiftDown) of
+    -- Escape
+    -- (27, _) -> ()
     -- Enter
     (13, _) -> (model, Ports.select 1)
     -- If shift is down, then make sure you do the right thing
