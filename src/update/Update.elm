@@ -43,7 +43,7 @@ update msg model =
       ({ model | scanningSettings = scanningSettings }
       , Cmd.map ScanningSettings cmd)
     ChangePage page ->
-      ({ model | page = page }, Cmd.none)
+      ({ model | page = page }, Ports.switchTree <| toString page)
     External cmdString ->
       let
         cmd =
