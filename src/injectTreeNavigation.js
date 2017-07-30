@@ -1,11 +1,3 @@
-const Actions = {
-  UP: 'UP',
-  NEXT: 'NEXT',
-  PREVIOUS: 'PREVIOUS',
-  SELECT: 'SELECT',
-  NOOP: 'NO-OP'
-}
-
 const treeNavDiv = document.createElement('div');
 treeNavDiv.id = 'tree-navigation';
 treeNavDiv.style.position  ='fixed';
@@ -16,42 +8,18 @@ treeNavDiv.style.height = h;
 treeNavDiv.style['z-index'] = 2000000001;
 treeNavDiv.style['pointer-events'] = 'none';
 
-document.body.appendChild(treeNavDiv);
-
+const Elm = require('./TreeNavigation.elm');
 const TreeNavigation = Elm.TreeNavigation.embed(treeNavDiv);
 
-document.onkeydown = (e) => {
-  if (e.key === 'Tab' || e.key === 'Enter') {
-    e.preventDefault();
-  }
+var state;
+
+const Actions = {
+  UP: 'UP',
+  NEXT: 'NEXT',
+  PREVIOUS: 'PREVIOUS',
+  SELECT: 'SELECT',
+  NOOP: 'NO-OP'
 }
-
-state = {
-  currentNode: {
-    parent: undefined,
-    children: [makeTree(document.body)],
-    element: document.body
-  },
-  currentChildIndex: 0,
-}
-
-select();
-
-console.log(state.currentNode);
-
-// MUTATIONS
-const debouncedOnMutation = _.debounce(onMutation, 100)
-const mutationObserver = new MutationObserver(debouncedOnMutation);
-
-mutationObserver.observe(document.body, {
-  childList: true,
-  subtree: true,
-})
-
-TreeNavigation.ports.select.subscribe(select);
-TreeNavigation.ports.next.subscribe(next)
-TreeNavigation.ports.previous.subscribe(previous)
-TreeNavigation.ports.up.subscribe(up);
 
 function select(foo) {
   if (!state) return;
@@ -141,29 +109,7 @@ TreeNavigation.ports.scrollIntoView.subscribe(isTall => {
 
 
 
-// Data race with key presses....
-function onMutation(mutationRecords, observer) {
-  console.log('MUTATION');
-  const newTree = makeTree(document.body);
 
-  // don't access the children if it's a leaf node.
-  const equivNode = findEquivalentNode(newTree, state.currentNode);
-  if (!equivNode) {
-    state.currentNode = newTree;
-    state.currentChildIndex = 0;
-    highlight(Actions.SELECT, state.currentNode.children[state.currentChildIndex]);
-  } else {
-    state.currentNode = equivNode;
-    if (state.currentNode.children.length === 0) {
-      highlight(Actions.NOOP, state.currentNode);
-    } else {
-      highlight(Actions.NOOP, state.currentNode.children[state.currentChildIndex]);
-    }
-  }
-
-  // current node should be maintained if it's still on the page.
-  // else go to top
-}
 
 function findEquivalentNode(tree, node) {
   if (tree.element.isEqualNode(node.element)) {
@@ -177,4 +123,69 @@ function findEquivalentNode(tree, node) {
   } else {
     return foundNodes[0];
   }
+}
+
+export default function inject(makeTree) {
+
+
+  document.body.appendChild(treeNavDiv);
+
+  document.onkeydown = (e) => {
+    if (e.key === 'Tab' || e.key === 'Enter') {
+      e.preventDefault();
+    }
+  }
+
+  state = {
+    currentNode: {
+      parent: undefined,
+      children: [makeTree(document.body)],
+      element: document.body
+    },
+    currentChildIndex: 0,
+  }
+
+  select();
+
+
+  console.log(state.currentNode);
+
+  // MUTATIONS
+  const debouncedOnMutation = _.debounce(onMutation, 100)
+  const mutationObserver = new MutationObserver(debouncedOnMutation);
+
+  mutationObserver.observe(document.body, {
+    childList: true,
+    subtree: true,
+  })
+
+  TreeNavigation.ports.select.subscribe(select);
+  TreeNavigation.ports.next.subscribe(next)
+  TreeNavigation.ports.previous.subscribe(previous)
+  TreeNavigation.ports.up.subscribe(up);
+
+  // Data race with key presses....
+  function onMutation(mutationRecords, observer) {
+    console.log('MUTATION');
+    const newTree = makeTree(document.body);
+
+    // don't access the children if it's a leaf node.
+    const equivNode = findEquivalentNode(newTree, state.currentNode);
+    if (!equivNode) {
+      state.currentNode = newTree;
+      state.currentChildIndex = 0;
+      highlight(Actions.SELECT, state.currentNode.children[state.currentChildIndex]);
+    } else {
+      state.currentNode = equivNode;
+      if (state.currentNode.children.length === 0) {
+        highlight(Actions.NOOP, state.currentNode);
+      } else {
+        highlight(Actions.NOOP, state.currentNode.children[state.currentChildIndex]);
+      }
+    }
+
+    // current node should be maintained if it's still on the page.
+    // else go to top
+  }
+  return TreeNavigation;
 }

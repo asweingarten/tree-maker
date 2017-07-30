@@ -1,5 +1,5 @@
 // Returns a pared down DOM-tree
-function makeTree(element, parent) {
+export default function makeTree(element, parent) {
   // if leaf node, return right away. Doesn't matter if images or w/e is tucked away inside
   let node = {
     parent,
