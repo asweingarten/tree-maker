@@ -14,7 +14,7 @@
     {
       "matches": ["https://*/*"],
       "css": [],
-      "js": ["lodash.custom.min.js", "treeNav.js", "makeTree.js", "injectTreeNavigation.js"]
+      "js": ["app.js"]
     }
   ],
 
