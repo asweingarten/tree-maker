@@ -9,5 +9,6 @@ type alias Model =
 type Msg
   = Disable
   | Enable
-
-  
+  | Toggle
+  | SetLoops (Result String Int)
+  | SetInterval (Result String Int)

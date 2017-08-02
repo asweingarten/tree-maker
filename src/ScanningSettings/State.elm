@@ -9,5 +9,18 @@ init =
 update : Model -> Msg -> (Model, Cmd Msg)
 update model msg =
   case msg of
-    Enable -> ({ model | isOn = True }, Cmd.none)
-    Disable -> ({ model | isOn = False }, Cmd.none)
+    Enable ->
+      ({ model | isOn = True }, Cmd.none)
+    Disable ->
+      ({ model | isOn = False }, Cmd.none)
+    Toggle ->
+      ({ model | isOn = not model.isOn }, Cmd.none)
+    SetLoops numLoopsResult ->
+      case numLoopsResult of
+        Err err -> (model, Cmd.none)
+        Ok value ->
+          ({ model | loops = value }, Cmd.none)
+    SetInterval intervalResult ->
+      case intervalResult of
+        Err err -> (model, Cmd.none)
+        Ok value -> ({ model | interval = toFloat value }, Cmd.none)
