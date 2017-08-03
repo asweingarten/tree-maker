@@ -6,6 +6,7 @@ import Task
 import Time exposing (Time)
 
 import ScanningSettings
+import CommandPalette
 
 type alias ScanState =
   { loops: Int
@@ -37,6 +38,7 @@ type alias Model =
   , isShiftDown : Bool
   , viewportSize : Size
   , scanningSettings: ScanningSettings.Model
+  , commandPalette: CommandPalette.Model
   , scan: ScanState
   , page: Page
   }
@@ -45,6 +47,7 @@ init : (Model, Cmd Msg)
 init =
   let
     (scanningSettingsModel, scanningSettingsCmd) = ScanningSettings.init
+    (commandPaletteModel, commandPaletteCmd) = CommandPalette.init
   in
   (Model
     -1
@@ -54,11 +57,13 @@ init =
     False
     (Size 0 0)
     scanningSettingsModel
+    commandPaletteModel
     (ScanState 0 0 0 False scanningSettingsModel)
     Website
   , Cmd.batch
       [ Task.perform WindowResize Window.size
       , Cmd.map ScanningSettings scanningSettingsCmd
+      , Cmd.map CommandPalette commandPaletteCmd
       ]
   )
 
@@ -71,6 +76,7 @@ type Msg
   | Scanning ScanMsg
   | External String
   | ScanningSettings ScanningSettings.Msg
+  | CommandPalette CommandPalette.Msg
   | ChangePage Page
 
 type Page

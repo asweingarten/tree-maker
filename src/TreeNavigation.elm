@@ -12,6 +12,8 @@ import View
 import Ports exposing (..)
 import Time exposing (every, millisecond)
 
+import CommandPalette
+
 {- TODO
 -- Scanning
   - afford configuration of all of this
@@ -47,6 +49,7 @@ subscriptions model =
   , Ports.resumeScanning (\x -> Scanning <| Resume x)
   , Ports.receiveExternalCmd External
   , scanSubscription model.scan
+  , Sub.map CommandPalette (CommandPalette.subscriptions model.commandPalette)
   ]
 
 keyDownSubscription : Model -> Keyboard.KeyCode -> Msg

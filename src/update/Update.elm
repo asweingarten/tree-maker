@@ -8,6 +8,7 @@ import Regions
 import Ports
 import ScanState
 import ScanningSettings
+import CommandPalette
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
@@ -42,6 +43,11 @@ update msg model =
       in
       ({ model | scanningSettings = scanningSettings }
       , Cmd.map ScanningSettings cmd)
+    CommandPalette msg ->
+      let (commandPalette, cmd) = CommandPalette.update msg model.commandPalette
+      in
+      ({ model | commandPalette = commandPalette }
+      , Cmd.map CommandPalette cmd)
     ChangePage page ->
       ({ model | page = page }, Ports.switchTree <| toString page)
     External cmdString ->
