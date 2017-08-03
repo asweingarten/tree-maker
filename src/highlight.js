@@ -1,32 +1,30 @@
-let highlightIndex = 0;
-function createHighlight(elementToHighlight, color='salmon', isTarget=false) {
-  const clientRect = elementToHighlight.getBoundingClientRect();
+const _ = require('./lodash.custom.min');
 
-  const borderWeight = 3;
-  const highlight = document.createElement('div');
-  highlight.class = `HIGHLIGHT-${highlightIndex}`;
-  highlightIndex += 1; // global var
-  highlight.style.position = 'fixed';
-  if (isTarget) {
-    highlight.style.left = `${clientRect.left - 2*borderWeight}px`;
-    highlight.style.top = `${clientRect.top - 2*borderWeight}px`;
+function highlight(TreeNavigation, action, activeNode) {
+  const activeRegion = computeGeometry(activeNode.element);
+  const childRegions = activeNode.children.map(c => computeGeometry(c.element));
+  const siblingRegions = !activeNode.parent ? [] : activeNode.parent.children
+    .map(c => computeGeometry(c.element))
+    .filter(x => !_.isEqual(x, activeRegion));
+  TreeNavigation.ports.regions.send({
+    action,
+    activeRegion,
+    childRegions,
+    siblingRegions
+  });
+}
 
-    highlight.style.width = `${elementToHighlight.offsetWidth + 2*borderWeight}px`;
-    highlight.style.height = `${elementToHighlight.offsetHeight + 2*borderWeight}px`;
-  } else {
-    highlight.style.left = `${clientRect.left}px`;
-    highlight.style.top = `${clientRect.top}px`;
-
-    highlight.style.width = `${elementToHighlight.offsetWidth - borderWeight}px`;
-    highlight.style.height = `${elementToHighlight.offsetHeight - borderWeight}px`;
-  }
-  highlight.style.border = `3px solid ${color}`;
-  highlight.style['border-radius'] = `${borderWeight}px`;
-  highlight.style['z-index'] = 2999999999;
-
-
+function computeGeometry(element) {
+  const boundingBox = element.getBoundingClientRect();
   return {
-    highlight,
-    el: elementToHighlight
+    x: ~~boundingBox.left,
+    y: ~~boundingBox.top,
+    width: ~~element.offsetWidth,
+    height: ~~element.offsetHeight
   };
+
+}
+
+module.exports = (TreeNavigation) => {
+  return highlight.bind(this, TreeNavigation);
 }

@@ -81,3 +81,5 @@ function isZeroHeight(node) {
 function asArray(htmlCollection) {
   return [].slice.call(htmlCollection);
 }
+
+module.exports = makeTree
