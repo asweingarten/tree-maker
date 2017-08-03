@@ -1,7 +1,7 @@
 module ScanningSettings.View exposing (view)
 
 import Html exposing (..)
-import Html.Attributes exposing (style, type_, checked, placeholder, id)
+import Html.Attributes exposing (style, type_, checked, placeholder, id, class)
 import Html.Events exposing (onCheck, onInput)
 
 import Json.Decode exposing (decodeString, int)
@@ -20,18 +20,33 @@ view model =
         ]
 
     html = div [myStyle]
-      [ div [] [labelledCheckbox Toggle "Scanning on?" model.isOn]
-      , div [] [incrementDecrementField SetLoops "Loops" model.loops]
-      , div [] [incrementDecrementField SetInterval "Interval" model.interval]
+      [ gridItem (labelledCheckbox Toggle "Scanning on?" model.isOn)
+      , gridItem (incrementDecrementField SetLoops "Loops" model.loops)
+      , gridItem (incrementDecrementField SetInterval "Interval" model.interval)
       ]
   in
   fullscreen "settings" html
 
+gridItem : Html msg -> Html msg
+gridItem toWrap =
+  let
+    myStyle =
+      style
+        [ ("font-size", "2rem")
+        , ("padding", "1.5rem")
+        , ("border", "1px solid lightgray")
+        , ("border-radius", "3px")
+        , ("display", "flex")
+        , ("justify-content", "center")
+        ]
+  in
+  div [myStyle, class "settings-grid-item"] [toWrap]
+
 labelledCheckbox: msg -> String -> Bool -> Html msg
 labelledCheckbox msg name isChecked =
   label []
-    [ input [ type_ "checkbox", onCheck (\b -> msg), checked isChecked] []
-    , text name
+    [ text name
+    , input [ type_ "checkbox", onCheck (\b -> msg), checked isChecked] []
     ]
 
 incrementDecrementField: (Result String Int -> msg) -> String -> number -> Html msg
@@ -56,6 +71,8 @@ fullscreen name html =
         , ("top", "0")
         , ("z-index", "20000000001")
         , ("background-color", "white")
+        , ("pointer-events", "all")
+        , ("padding", "1.5rem")
         ]
   in
   div [myStyle, id name] [html]
