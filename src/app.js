@@ -2,7 +2,7 @@ const _ = require('./lodash.custom.min');
 const makeTree = require('./makeTree.js');
 const TreeNavigation = require('./injectTreeNavigation.js');
 const highlight = require('./highlight.js')(TreeNavigation);
-const registerMutationObserver = require('./onMutation.js');
+const createMutationObserver = require('./onMutation.js');
 
 const Actions = {
   UP: 'UP',
@@ -12,24 +12,43 @@ const Actions = {
   NOOP: 'NO-OP'
 }
 
-let state = {
-  currentNode: {
-    parent: undefined,
-    children: [makeTree(document.body)],
-    element: document.body
-  },
-  currentChildIndex: 0,
-}
+let state = createState(document.body);
 
-registerMutationObserver(state, highlight);
+let mutationObserver = createMutationObserver(state, highlight);
+mutationObserver.observe(document.body, {
+  childList: true,
+  subtree: true,
+});
+
 select();
 
 console.log(state.currentNode);
+
+// SCROLLING
+TreeNavigation.ports.scrollIntoView.subscribe(isTall => {
+  console.log("SCROLL TIME");
+  const regionInFocus = state.currentNode.children[state.currentChildIndex].element;
+  regionInFocus.scrollIntoView(isTall)
+  if (isTall) {
+    window.scrollBy(0, -100);
+  }
+});
 
 TreeNavigation.ports.select.subscribe(select);
 TreeNavigation.ports.next.subscribe(next)
 TreeNavigation.ports.previous.subscribe(previous)
 TreeNavigation.ports.up.subscribe(up);
+
+function createState(rootNode) {
+  return {
+    currentNode: {
+      parent: undefined,
+      children: [makeTree(rootNode)],
+      element: rootNode
+    },
+    currentChildIndex: 0,
+  }
+}
 
 function select(foo) {
   if (!state) return;
@@ -80,13 +99,3 @@ function up(foo) {
     highlight(Actions.UP, state.currentNode.children[state.currentChildIndex])
   }
 }
-
-// SCROLLING
-TreeNavigation.ports.scrollIntoView.subscribe(isTall => {
-  console.log("SCROLL TIME");
-  const regionInFocus = state.currentNode.children[state.currentChildIndex].element;
-  regionInFocus.scrollIntoView(isTall)
-  if (isTall) {
-    window.scrollBy(0, -100);
-  }
-});

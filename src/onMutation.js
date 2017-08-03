@@ -9,7 +9,7 @@ const Actions = {
 }
 // Data race with key presses....
 
-function registerMutationObserver(state, highlight) {
+function createMutationObserver(state, highlight) {
   function onMutation(mutationRecords, observer) {
     console.log('MUTATION');
     const newTree = makeTree(document.body);
@@ -49,11 +49,8 @@ function registerMutationObserver(state, highlight) {
 
   const debouncedOnMutation = _.debounce(onMutation, 100)
   const mutationObserver = new MutationObserver(debouncedOnMutation);
+  return mutationObserver;
 
-  mutationObserver.observe(document.body, {
-    childList: true,
-    subtree: true,
-  });
 }
 
-module.exports = registerMutationObserver;
+module.exports = createMutationObserver;
