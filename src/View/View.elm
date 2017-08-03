@@ -13,7 +13,7 @@ view model  =
     -- childrenHighlights = List.map (highlight "2px dashed lightsteelblue") childRegions
     siblingHighlights = List.map (highlight "2px dashed mediumaquamarine") model.siblingRegions
   in
-  div []
+  div [id "tree-nav-screen"]
     [ div [id "highlights"] ([activeRegionHighlight] ++ siblingHighlights)
     , page model
     ]

@@ -1,7 +1,7 @@
 module ScanningSettings.View exposing (view)
 
 import Html exposing (..)
-import Html.Attributes exposing (style, type_, checked, placeholder)
+import Html.Attributes exposing (style, type_, checked, placeholder, id)
 import Html.Events exposing (onCheck, onInput)
 
 import Json.Decode exposing (decodeString, int)
@@ -25,7 +25,7 @@ view model =
       , div [] [incrementDecrementField SetInterval "Interval" model.interval]
       ]
   in
-  fullscreen html
+  fullscreen "settings" html
 
 labelledCheckbox: msg -> String -> Bool -> Html msg
 labelledCheckbox msg name isChecked =
@@ -44,16 +44,18 @@ incrementDecrementField msg name currentValue =
     , text name
     ]
 
-fullscreen: Html Msg -> Html Msg
-fullscreen html =
+fullscreen: String -> Html Msg -> Html Msg
+fullscreen name html =
   let
     myStyle =
       style
-        [ ("display", "fixed")
+        [ ("position", "fixed")
         , ("width", "100%")
         , ("height", "100%")
+        , ("left", "0")
+        , ("top", "0")
         , ("z-index", "20000000001")
         , ("background-color", "white")
         ]
   in
-  div [myStyle] [html]
+  div [myStyle, id name] [html]
