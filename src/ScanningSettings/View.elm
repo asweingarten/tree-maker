@@ -25,7 +25,7 @@ view model =
       , gridItem (incrementDecrementField SetInterval "Interval" model.interval)
       ]
   in
-  fullscreen "settings" html
+  fullscreen "tn-settings" html
 
 gridItem : Html msg -> Html msg
 gridItem toWrap =
@@ -40,7 +40,8 @@ gridItem toWrap =
         , ("justify-content", "center")
         ]
   in
-  div [myStyle, class "settings-grid-item"] [toWrap]
+  div [myStyle, class "settings-grid-item"]
+    [a [] [toWrap]]
 
 labelledCheckbox: msg -> String -> Bool -> Html msg
 labelledCheckbox msg name isChecked =
@@ -69,7 +70,7 @@ fullscreen name html =
         , ("height", "100%")
         , ("left", "0")
         , ("top", "0")
-        , ("z-index", "20000000001")
+        -- , ("z-index", "20000000001")
         , ("background-color", "white")
         , ("pointer-events", "all")
         , ("padding", "1.5rem")

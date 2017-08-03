@@ -15,14 +15,27 @@ const Actions = {
 let state = createState(document.body);
 
 let mutationObserver = createMutationObserver(state, highlight);
-mutationObserver.observe(document.body, {
-  childList: true,
-  subtree: true,
-});
 
 select();
 
 console.log(state.currentNode);
+
+// PageChange
+TreeNavigation.ports.switchTree.subscribe(page => {
+  mutationObserver.disconnect();
+  let root;
+  if (page === 'Website') {
+    root = () => document.body;
+  } else if (page === 'ScanningSettingsPage') {
+    root = () => document.getElementById('tn-settings');
+  }
+  setTimeout(() => {
+    console.log(root());
+    state = createState(root());
+    select();
+    mutationObserver = createMutationObserver(state, highlight);
+  }, 100);
+})
 
 // SCROLLING
 TreeNavigation.ports.scrollIntoView.subscribe(isTall => {

@@ -49,6 +49,10 @@ function createMutationObserver(state, highlight) {
 
   const debouncedOnMutation = _.debounce(onMutation, 100)
   const mutationObserver = new MutationObserver(debouncedOnMutation);
+  mutationObserver.observe(document.body, {
+    childList: true,
+    subtree: true,
+  });
   return mutationObserver;
 
 }
