@@ -4,7 +4,8 @@ import Time exposing (Time)
 import Debug exposing (log)
 
 import CommandPalette.Types exposing (..)
-import CommandPalette.Ports as Ports
+-- import CommandPalette.Ports as Ports
+import Ports
 
 update : Model -> DwellCommand -> Direction -> Time -> (Model, Cmd Msg)
 update model command direction time =
@@ -20,7 +21,7 @@ update model command direction time =
           _ = log "command about to be fired" activeCommand
         in
         ({ model | commandPalette = cmdP, direction = Nothing }
-        , Ports.commandFired <| toString activeCommand.direction)
+        , directionToPort activeCommand.direction)
       (Just activeCommand, Nothing, False) ->
         let
           cmdP = { c | activeCommand = Just updatedCommand }
@@ -34,9 +35,11 @@ update model command direction time =
         case updatedActiveCommand of
           True ->
             -- Active Command is fired
-            let cmdP = { c | activeCommand = Nothing, isActive = False, candidateCommand = Nothing }
+            let
+              cmdP = { c | activeCommand = Nothing, isActive = False, candidateCommand = Nothing }
             in
-            ({ model | commandPalette = cmdP }, Ports.commandFired <| toString activeCommand.direction)
+            ({ model | commandPalette = cmdP }
+            , directionToPort activeCommand.direction)
           False ->
             -- Candidate Command takes over
             let newActiveCmd = Just { candidateCommand | threshold = 10 }
@@ -59,3 +62,11 @@ update model command direction time =
             in
             ({ model | commandPalette = cmdP }, Cmd.none)
       (_,_,_) -> (model, Cmd.none)
+
+directionToPort: Direction -> Cmd Msg
+directionToPort direction =
+  case direction of
+    North -> Ports.up 1
+    West -> Ports.previous 1
+    South -> Ports.select 1
+    _ -> Cmd.none

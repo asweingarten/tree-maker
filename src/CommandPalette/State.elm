@@ -3,6 +3,7 @@ module CommandPalette.State exposing (init, update)
 import Mouse exposing (Position)
 import Task
 import Window exposing (Size)
+import Debug
 
 import CommandPalette.Types exposing (Model, CommandPalette, Msg(..), Direction(..), Square)
 import CommandPalette.ChangeDirection as ChangeDirection
@@ -24,6 +25,7 @@ init =
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg model =
   case msg of
+    PauseScanning -> (model, Cmd.none)
     CursorMoved newPosition ->
       onCursorMoved newPosition model
     Dwell command direction time ->

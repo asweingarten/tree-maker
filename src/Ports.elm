@@ -1,7 +1,20 @@
 port module Ports exposing (..)
 
-import Model exposing (..)
+-- Not good to redundantly define types to avoid circular deps
 
+type alias RegionData =
+  { activeRegion : Geometry
+  , childRegions: List Geometry
+  , siblingRegions: List Geometry
+  , action: String
+  }
+
+type alias Geometry =
+  { x: Int
+  , y: Int
+  , width: Int
+  , height: Int
+  }
 -- PORT
 port next : Int -> Cmd msg
 port previous : Int -> Cmd msg

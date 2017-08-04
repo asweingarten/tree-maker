@@ -44,6 +44,7 @@ update msg model =
       ({ model | scanningSettings = scanningSettings }
       , Cmd.map ScanningSettings cmd)
     CommandPalette msg ->
+      -- what do when sub-modules should impact the global state?
       let (commandPalette, cmd) = CommandPalette.update msg model.commandPalette
       in
       ({ model | commandPalette = commandPalette }

@@ -5,6 +5,7 @@ import Html.Attributes exposing (style, id)
 
 import Model exposing (..)
 import ScanningSettings
+import CommandPalette
 
 view : Model -> Html Msg
 view model  =
@@ -16,6 +17,7 @@ view model  =
   div [id "tree-nav-screen"]
     [ div [id "highlights"] ([activeRegionHighlight] ++ siblingHighlights)
     , page model
+    , CommandPalette.view model.commandPalette.commandPalette |> Html.map CommandPalette
     ]
 
 page : Model -> Html Msg

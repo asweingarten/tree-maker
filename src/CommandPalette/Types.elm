@@ -45,6 +45,7 @@ type Msg
   | WindowResize Size
   | ScreenSize Size
   | SetActivationTime String
+  | PauseScanning
 
 type alias Square =
   { x: Int

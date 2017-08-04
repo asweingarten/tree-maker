@@ -20,6 +20,9 @@ select();
 
 console.log(state.currentNode);
 
+window.addEventListener("click", (event) => TreeNavigation.ports.clicks.send({ x: ~~event.clientX, y: ~~event.clientY}))
+window.addEventListener("mousemove", (event) => TreeNavigation.ports.moves.send({ x: ~~event.clientX, y: ~~event.clientY}));
+
 // PageChange
 TreeNavigation.ports.switchTree.subscribe(page => {
   mutationObserver.disconnect();
@@ -52,6 +55,13 @@ TreeNavigation.ports.select.subscribe(select);
 TreeNavigation.ports.next.subscribe(next)
 TreeNavigation.ports.previous.subscribe(previous)
 TreeNavigation.ports.up.subscribe(up);
+
+// TreeNavigation.ports.commandFired.subscribe(direction => {
+//   TreeNavigation.ports.resumeScanning.send('x');
+// })
+
+TreeNavigation.ports.activated.subscribe(x => TreeNavigation.ports.pauseScanning.send('x'));
+
 
 function createState(rootNode) {
   return {
