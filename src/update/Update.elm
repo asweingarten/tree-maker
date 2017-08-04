@@ -51,6 +51,8 @@ update msg model =
       , Cmd.map CommandPalette cmd)
     ChangePage page ->
       ({ model | page = page }, Ports.switchTree <| toString page)
+    ToggleCommandPalette ->
+      ({ model | showCommandPalette = not model.showCommandPalette }, Cmd.none)
     External cmdString ->
       let
         cmd =

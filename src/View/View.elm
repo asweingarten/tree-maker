@@ -2,6 +2,7 @@ module View exposing (view)
 
 import Html exposing (..)
 import Html.Attributes exposing (style, id)
+import Html.Events exposing (onMouseEnter)
 
 import Model exposing (..)
 import ScanningSettings
@@ -13,12 +14,34 @@ view model  =
     activeRegionHighlight = highlight "3px solid orangered" model.activeRegion
     -- childrenHighlights = List.map (highlight "2px dashed lightsteelblue") childRegions
     siblingHighlights = List.map (highlight "2px dashed mediumaquamarine") model.siblingRegions
+    (commandPalette, cpTrigger) =
+      case model.showCommandPalette of
+        True -> (CommandPalette.view model.commandPalette.commandPalette |> Html.map CommandPalette, div [] [])
+        False -> (div [] [], commandPaletteTrigger)
   in
   div [id "tree-nav-screen"]
     [ div [id "highlights"] ([activeRegionHighlight] ++ siblingHighlights)
     , page model
-    , CommandPalette.view model.commandPalette.commandPalette |> Html.map CommandPalette
+    , commandPalette
+    , cpTrigger
     ]
+
+commandPaletteTrigger : Html Msg
+commandPaletteTrigger =
+  let
+    myStyle =
+      style
+        [ ("position", "fixed")
+        , ("right", "0")
+        , ("bottom", "0")
+        , ("width", "13%")
+        , ("height", "20%")
+        , ("background-color", "rgba(40, 40, 40, 1)")
+        , ("pointer-events", "all")
+        , ("text-align", "center")
+        ]
+  in
+  div [myStyle, onMouseEnter ToggleCommandPalette] [text "Actions"]
 
 page : Model -> Html Msg
 page model =

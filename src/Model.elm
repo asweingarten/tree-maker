@@ -41,6 +41,7 @@ type alias Model =
   , commandPalette: CommandPalette.Model
   , scan: ScanState
   , page: Page
+  , showCommandPalette: Bool
   }
 
 init : (Model, Cmd Msg)
@@ -60,6 +61,7 @@ init =
     commandPaletteModel
     (ScanState 0 0 0 False scanningSettingsModel)
     Website
+    False
   , Cmd.batch
       [ Task.perform WindowResize Window.size
       , Cmd.map ScanningSettings scanningSettingsCmd
@@ -78,6 +80,7 @@ type Msg
   | ScanningSettings ScanningSettings.Msg
   | CommandPalette CommandPalette.Msg
   | ChangePage Page
+  | ToggleCommandPalette
 
 type Page
   = Website

@@ -37,8 +37,8 @@ update msg model =
     WindowResize wSize ->
       -- update command palette size and position
       let
-        cmdPX = (4 * wSize.width |> toFloat) / 5 |> round
-        cmdPY = (3 * wSize.height |> toFloat) / 5 |> round
+        cmdPX = (wSize.width |> toFloat) / 2 |> round
+        cmdPY = (wSize.height |> toFloat) / 2 |> round
         cmdPSideLength = (wSize.height |> toFloat) / 5 |> round
         newCommandPaletteDimensions = (Square cmdPX cmdPY cmdPSideLength)
         c = model.commandPalette
