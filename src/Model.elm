@@ -81,6 +81,7 @@ type Msg
   | CommandPalette CommandPalette.Msg
   | ChangePage Page
   | ToggleCommandPalette
+  | Myo String
 
 type Page
   = Website

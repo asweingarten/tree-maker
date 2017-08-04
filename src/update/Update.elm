@@ -53,6 +53,10 @@ update msg model =
       ({ model | page = page }, Ports.switchTree <| toString page)
     ToggleCommandPalette ->
       ({ model | showCommandPalette = not model.showCommandPalette }, Cmd.none)
+    Myo foo->
+      let _ = log "myo received" foo
+      in
+      (model, Cmd.none)
     External cmdString ->
       let
         cmd =

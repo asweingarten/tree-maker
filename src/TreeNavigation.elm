@@ -3,14 +3,13 @@ module TreeNavigation exposing (..)
 import Html
 import Keyboard
 import Window exposing (resizes, Size)
-import Json.Encode exposing (Value)
-import Json.Decode as Decode
 
 import Model exposing (..)
 import Update
 import View
 import Ports exposing (..)
 import Time exposing (every, millisecond)
+import WebSocket
 
 import CommandPalette
 
@@ -36,6 +35,11 @@ main =
   }
 
 -- SUBSCRIPTIONS
+myoWebSocketServer : String
+myoWebSocketServer = "ws://localhost:8080"
+
+myoSubscription : Sub Msg
+myoSubscription = WebSocket.listen myoWebSocketServer Myo
 
 subscriptions : Model -> Sub Msg
 subscriptions model =
@@ -49,6 +53,7 @@ subscriptions model =
   , Ports.resumeScanning (\x -> Scanning <| Resume x)
   , Ports.receiveExternalCmd External
   , scanSubscription model.scan
+  , myoSubscription
   , Sub.map CommandPalette (CommandPalette.subscriptions model.commandPalette)
   ]
 
