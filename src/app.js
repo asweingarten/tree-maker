@@ -45,6 +45,7 @@ TreeNavigation.ports.scrollIntoView.subscribe(isTall => {
   if (isTall) {
     window.scrollBy(0, -100);
   }
+  highlight(Actions.NOOP, state.currentNode.children[state.currentChildIndex]);
 });
 
 TreeNavigation.ports.select.subscribe(select);
