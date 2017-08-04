@@ -1,7 +1,7 @@
 module ScanningSettings.View exposing (view)
 
 import Html exposing (..)
-import Html.Attributes exposing (style, type_, checked, placeholder, id, class)
+import Html.Attributes exposing (style, type_, checked, placeholder, id, class, href)
 import Html.Events exposing (onCheck, onInput)
 
 import Json.Decode exposing (decodeString, int)
@@ -23,9 +23,16 @@ view model =
       [ gridItem (labelledCheckbox Toggle "Scanning on?" model.isOn)
       , gridItem (incrementDecrementField SetLoops "Loops" model.loops)
       , gridItem (incrementDecrementField SetInterval "Interval" model.interval)
+      , gridItem (websiteOption "http://www.foxnews.com" "Fox News")
+      , gridItem (websiteOption "https://www.youtube.com" "YouTube")
+      , gridItem (websiteOption "play.spotyify.com" "Spotify")
       ]
   in
   fullscreen "tn-settings" html
+
+websiteOption: String -> String -> Html msg
+websiteOption link name =
+  a [href link] [text name]
 
 gridItem : Html msg -> Html msg
 gridItem toWrap =
@@ -41,7 +48,7 @@ gridItem toWrap =
         ]
   in
   div [myStyle, class "settings-grid-item"]
-    [a [] [toWrap]]
+    [toWrap]
 
 labelledCheckbox: msg -> String -> Bool -> Html msg
 labelledCheckbox msg name isChecked =
