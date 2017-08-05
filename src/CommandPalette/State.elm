@@ -71,7 +71,7 @@ update msg model =
         Just command ->
           let
             cmd = directionToPort command.direction
-            cp = (\x -> { x | activeCommand = Nothing }) model.commandPalette
+            cp = (\x -> { x | activeCommand = Nothing, candidateCommand = Nothing, isActive = False }) model.commandPalette
           in
           ({ model | commandPalette = cp }, cmd)
         Nothing ->
