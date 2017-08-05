@@ -60,7 +60,15 @@ update msg model =
       in
       case activeCommand of
         Just command ->
-          update (CommandPalette ActivateActiveCommand) model
+          let
+            (newModel, cmd) = update (CommandPalette ActivateActiveCommand) model
+            page =
+              case (command.direction, model.page) of
+                (CommandPalette.Types.West, Website) -> ScanningSettingsPage
+                (CommandPalette.Types.West, ScanningSettingsPage) -> Website
+                (_, _) -> model.page
+          in
+          ({ newModel | page = page }, Cmd.batch [cmd])
         Nothing ->
           (model, Ports.select 1)
     External cmdString ->

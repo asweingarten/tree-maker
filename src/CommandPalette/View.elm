@@ -79,7 +79,7 @@ view {dimensions, isActive, activeCommand, candidateCommand, activationTimeInMil
     [ div [myStyle] []
     , progressBar
     , candidateBar
-    , div [westStyle] [text "Previous"]
+    , div [westStyle] [text "Menu"]
     , div [northStyle] [text "Up"]
     , div [eastStyle] [text "Next"]
     , div [southStyle] [text "Select"]

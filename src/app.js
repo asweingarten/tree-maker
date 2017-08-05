@@ -12,7 +12,7 @@ const Actions = {
   NOOP: 'NO-OP'
 }
 
-let state = createState(document.body);
+let state = createState('Website');
 
 let mutationObserver = createMutationObserver(state, highlight);
 
@@ -26,19 +26,46 @@ window.addEventListener("mousemove", (event) => TreeNavigation.ports.moves.send(
 // PageChange
 TreeNavigation.ports.switchTree.subscribe(page => {
   mutationObserver.disconnect();
-  let root;
-  if (page === 'Website') {
-    root = () => document.body;
-  } else if (page === 'ScanningSettingsPage') {
-    root = () => document.getElementById('tn-settings');
-  }
+  // let root;
+  // if (page === 'Website') {
+  //   root = () => document.body;
+  // } else if (page === 'ScanningSettingsPage') {
+  //   root = () => document.getElementById('tn-settings');
+  // } else if (page === 'Toggle') {
+  //   if (state.treeName === 'Website')
+  // }
   setTimeout(() => {
-    console.log(root());
-    state = createState(root());
+    state = createState(page);
     select();
     mutationObserver = createMutationObserver(state, highlight);
   }, 100);
-})
+});
+
+function createState(treeName) {
+  let rootNode
+  switch (treeName) {
+    case 'Website':
+      rootNode = document.body;
+      break;
+    case 'ScanningSettingsPage':
+      rootNode = document.getElementById('tn-settings');
+      break;
+    case 'Toggle':
+      return state.treeName === 'Website' ? createState('ScanningSettingsPage') : createState('Website');
+    default:
+      return createState('Website');
+  }
+
+  return {
+    currentNode: {
+      parent: undefined,
+      children: [makeTree(rootNode)],
+      element: rootNode
+    },
+    currentChildIndex: 0,
+    treeName
+  }
+}
 
 // SCROLLING
 TreeNavigation.ports.scrollIntoView.subscribe(isTall => {
@@ -63,16 +90,7 @@ TreeNavigation.ports.up.subscribe(up);
 TreeNavigation.ports.activated.subscribe(x => TreeNavigation.ports.pauseScanning.send('x'));
 
 
-function createState(rootNode) {
-  return {
-    currentNode: {
-      parent: undefined,
-      children: [makeTree(rootNode)],
-      element: rootNode
-    },
-    currentChildIndex: 0,
-  }
-}
+
 
 function select(foo) {
   if (!state) return;
