@@ -4,7 +4,7 @@ import Time exposing (Time)
 import Debug exposing (log)
 
 import CommandPalette.Types exposing (..)
--- import CommandPalette.Ports as Ports
+import CommandPalette.Util exposing (directionToPort)
 import Ports
 
 update : Model -> DwellCommand -> Direction -> Time -> (Model, Cmd Msg)
@@ -62,11 +62,3 @@ update model command direction time =
             in
             ({ model | commandPalette = cmdP }, Cmd.none)
       (_,_,_) -> (model, Cmd.none)
-
-directionToPort: Direction -> Cmd Msg
-directionToPort direction =
-  case direction of
-    North -> Ports.up 1
-    West -> Ports.previous 1
-    South -> Ports.select 1
-    _ -> Cmd.none

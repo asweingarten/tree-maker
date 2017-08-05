@@ -9,6 +9,7 @@ import CommandPalette.Types exposing (Model, CommandPalette, Msg(..), Direction(
 import CommandPalette.ChangeDirection as ChangeDirection
 import CommandPalette.Dwell as Dwell
 import CommandPalette.Ports as Ports
+import CommandPalette.Util exposing (directionToPort)
 
 init : (Model, Cmd Msg)
 init =
@@ -62,6 +63,19 @@ update msg model =
       in
       ({ model | commandPalette = { commandPalette | activationTimeInMillis = newTimeFloat } }
       , Cmd.none)
+    ActivateActiveCommand ->
+      let
+        activeCommand = model.commandPalette.activeCommand
+      in
+      case activeCommand of
+        Just command ->
+          let
+            cmd = directionToPort command.direction
+            cp = (\x -> { x | activeCommand = Nothing }) model.commandPalette
+          in
+          ({ model | commandPalette = cp }, cmd)
+        Nothing ->
+          (model, Cmd.none)
 
 onCursorMoved : Position -> Model -> (Model, Cmd Msg)
 onCursorMoved newPosition model =

@@ -46,6 +46,7 @@ type Msg
   | ScreenSize Size
   | SetActivationTime String
   | PauseScanning
+  | ActivateActiveCommand
 
 type alias Square =
   { x: Int

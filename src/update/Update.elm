@@ -9,8 +9,9 @@ import Ports
 import ScanState
 import ScanningSettings
 import CommandPalette
+import CommandPalette.Types exposing (Msg(ActivateActiveCommand))
 
-update : Msg -> Model -> (Model, Cmd Msg)
+update : Model.Msg -> Model -> (Model, Cmd Model.Msg)
 update msg model =
   case msg of
     NoOp ->
@@ -53,10 +54,15 @@ update msg model =
       ({ model | page = page }, Ports.switchTree <| toString page)
     ToggleCommandPalette ->
       ({ model | showCommandPalette = not model.showCommandPalette }, Cmd.none)
-    Myo foo->
-      let _ = log "myo received" foo
+    Myo foo ->
+      let
+        activeCommand = model.commandPalette.commandPalette.activeCommand
       in
-      (model, Cmd.none)
+      case activeCommand of
+        Just command ->
+          update (CommandPalette ActivateActiveCommand) model
+        Nothing ->
+          (model, Ports.select 1)
     External cmdString ->
       let
         cmd =
