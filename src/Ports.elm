@@ -15,18 +15,25 @@ type alias Geometry =
   , width: Int
   , height: Int
   }
--- PORT
+
+-- Commands
 port next : Int -> Cmd msg
 port previous : Int -> Cmd msg
 port select : Int -> Cmd msg
 port up : Int -> Cmd msg
 
+port switchTree : String -> Cmd msg
 port scrollIntoView : Bool -> Cmd msg
 
+-- While figuring out how to elegantly subscribe to occurences in child modules,
+-- going to hack around with porting out to JS and then porting back in
+port startScanning : Int -> Cmd msg
+
+
+-- Subscriptions
 port regions : (RegionData -> msg) -> Sub msg
+
 port pauseScanning : (String -> msg) -> Sub msg
 port resumeScanning : (String -> msg) -> Sub msg
-
-port switchTree : String -> Cmd msg
 
 port receiveExternalCmd : (String -> msg) -> Sub msg

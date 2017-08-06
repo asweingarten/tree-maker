@@ -57,7 +57,7 @@ view {dimensions, isActive, activeCommand, candidateCommand, activationTimeInMil
     , candidateBar
     , div [westStyle] [text "Menu"]
     , div [northStyle] [text "Up"]
-    , div [eastStyle] [text "Next"]
+    , div [eastStyle] [text "Scan"]
     , div [southStyle] [text "Select"]
     ]
 

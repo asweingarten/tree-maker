@@ -26,19 +26,11 @@ window.addEventListener("mousemove", (event) => TreeNavigation.ports.moves.send(
 // PageChange
 TreeNavigation.ports.switchTree.subscribe(page => {
   mutationObserver.disconnect();
-  // let root;
-  // if (page === 'Website') {
-  //   root = () => document.body;
-  // } else if (page === 'ScanningSettingsPage') {
-  //   root = () => document.getElementById('tn-settings');
-  // } else if (page === 'Toggle') {
-  //   if (state.treeName === 'Website')
-  // }
   setTimeout(() => {
     state = createState(page);
     select();
     mutationObserver = createMutationObserver(state, highlight);
-  }, 100);
+  }, 200);
 });
 
 function createState(treeName) {
@@ -83,14 +75,9 @@ TreeNavigation.ports.next.subscribe(next)
 TreeNavigation.ports.previous.subscribe(previous)
 TreeNavigation.ports.up.subscribe(up);
 
-// TreeNavigation.ports.commandFired.subscribe(direction => {
-//   TreeNavigation.ports.resumeScanning.send('x');
-// })
+TreeNavigation.ports.startScanning.subscribe(d => TreeNavigation.ports.resumeScanning.send('x'));
 
 TreeNavigation.ports.activated.subscribe(x => TreeNavigation.ports.pauseScanning.send('x'));
-
-
-
 
 function select(foo) {
   if (!state) return;

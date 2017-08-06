@@ -9,4 +9,5 @@ directionToPort direction =
     North -> Ports.up 1
     West -> Ports.switchTree "Toggle"
     South -> Ports.select 1
+    East -> Ports.startScanning 1
     _ -> Cmd.none
