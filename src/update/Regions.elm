@@ -28,28 +28,29 @@ scrollCommand : Geometry -> Size -> Cmd Msg
 scrollCommand geometry viewportSize =
   let
     isTall = geometry.height > viewportSize.height
+    isWide = geometry.width > viewportSize.width
     _ = log "isTall" isTall
-    isInViewport = isElementInViewport geometry viewportSize isTall
+    isInViewport = isElementInViewport geometry viewportSize isTall isWide
     _ = log "isInViewport" isInViewport
   in
   case isInViewport of
     True -> Cmd.none
     False -> Ports.scrollIntoView isTall
 
-isElementInViewport : Geometry -> Size -> Bool -> Bool
-isElementInViewport geometry size isTall =
+isElementInViewport : Geometry -> Size -> Bool -> Bool -> Bool
+isElementInViewport geometry viewportSize isTall isWide =
   case isTall of
     True ->
-      let x = ( (geometry.y) + (round ( (toFloat (geometry.height)) / 4) ) )
+      let heightOfQuarterOfElement = ( (geometry.y) + (round ( (toFloat (geometry.height)) / 4) ) )
       in
       geometry.y >= 0
       && (geometry.x >= 0)
-      && (size.height >= x)
+      -- && (viewportSize.height >= heightOfQuarterOfElement)
     False ->
       geometry.y >= 0
       && (geometry.x >= 0)
-      && ((geometry.y + geometry.height) <= size.height)
-      && (geometry.x + geometry.width <= size.width)
+      && ((geometry.y + geometry.height) <= viewportSize.height)
+      -- && (geometry.x + geometry.width <= size.width)
 -- if (!isElementInViewport(currentDomElement)) {
 --   const rect = currentDomElement.getBoundingClientRect();
 --   const isTall = rect.height > window.innerHeight;
