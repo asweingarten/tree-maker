@@ -96,6 +96,7 @@ function select(foo) {
   if (!currentlyHighlightedNode) return;
 
   TreeNavigation.ports.hideCommandPalette.send('x');
+  TreeNavigation.ports.resumeScanning.send('x');
 
   if (currentlyHighlightedNode.children.length === 0) {
     // Click but don't make it the current node
