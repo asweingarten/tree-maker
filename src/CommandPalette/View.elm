@@ -46,34 +46,10 @@ view {dimensions, isActive, activeCommand, candidateCommand, activationTimeInMil
         , ("height", len)
         , ("background-color", color)
         ]
-    westStyle =
-      style
-        [ ("position", "fixed")
-        , ("left", toPixels (x - sideLength - 170))
-        , ("top", toPixels (y - 12))
-        , ("font-size", toPixels 48 )
-        ]
-    northStyle =
-      style
-        [ ("position", "fixed")
-        , ("left", toPixels (x - 24))
-        , ("top", toPixels (y - sideLength - 70))
-        , ("font-size", toPixels 48 )
-        ]
-    eastStyle =
-      style
-        [ ("position", "fixed")
-        , ("left", toPixels (x + sideLength))
-        , ("top", toPixels (y - 12))
-        , ("font-size", toPixels 48 )
-        ]
-    southStyle =
-      style
-        [ ("position", "fixed")
-        , ("left", toPixels (x - 24))
-        , ("top", toPixels (y + sideLength))
-        , ("font-size", toPixels 48 )
-        ]
+    westStyle = commandTextStyle (x - sideLength - 160) (y - 12)
+    northStyle = commandTextStyle (x - 24) (y - sideLength - 80)
+    eastStyle = commandTextStyle (x + sideLength + 10) (y - 12)
+    southStyle = commandTextStyle (x - 48) (y + sideLength + 10)
   in
   div []
     [ div [myStyle] []
@@ -83,6 +59,18 @@ view {dimensions, isActive, activeCommand, candidateCommand, activationTimeInMil
     , div [northStyle] [text "Up"]
     , div [eastStyle] [text "Next"]
     , div [southStyle] [text "Select"]
+    ]
+
+commandTextStyle : Int -> Int -> Attribute Msg
+commandTextStyle left top =
+  style
+    [ ("position", "fixed")
+    , ("left", toPixels left)
+    , ("top", toPixels top)
+    , ("font-size", "3rem")
+    , ("border-radius", "3px")
+    , ("background-color", "rgba(240, 240, 240, 0.9)")
+    , ("padding", "0 10px")
     ]
 
 toPixels : Int -> String
