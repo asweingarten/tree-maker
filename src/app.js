@@ -65,8 +65,11 @@ function createState(treeName) {
 
 // SCROLLING
 TreeNavigation.ports.scrollIntoView.subscribe(isTall => {
-  console.log("SCROLL TIME");
+  // console.log("SCROLL TIME");
   const regionInFocus = state.currentNode.children[state.currentChildIndex].element;
+  const geometry = regionInFocus.getBoundingClientRect();
+  console.log(`left: ${geometry.left}`)
+  window.scrollBy(geometry.left, 0);
   regionInFocus.scrollIntoView(isTall)
   if (isTall) {
     window.scrollBy(0, -100);
