@@ -17,6 +17,7 @@ view model =
         , ("grid-template-columns", "repeat(3, 1fr)")
         , ("grid-column-gap", "1rem")
         , ("grid-row-gap", "1rem")
+        , ("width", "95%")
         ]
 
     html = div [myStyle]
