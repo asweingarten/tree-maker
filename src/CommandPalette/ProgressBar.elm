@@ -14,7 +14,8 @@ view {direction, progress} =
     progressBarStyle =
       style
         (
-          [ ("background-color", "rgba(25,25,25, 0.2)")
+          [ ("background-color", "rgba(25,25,25, 0.4)")
+          , ("border", "3px solid rgba(230, 230, 230, 0.4)")
           , ("position", "fixed")
           , width
           , height
