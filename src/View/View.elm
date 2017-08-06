@@ -36,7 +36,9 @@ commandPaletteTrigger =
         , ("bottom", "0")
         , ("width", "13%")
         , ("height", "20%")
-        , ("background-color", "rgba(40, 40, 40, 1)")
+        , ("background-color", "rgba(40, 40, 40, 0.7)")
+        , ("border", "3px solid rgba(230, 230, 230, 0.7)")
+        , ("border-radius", "3px")
         , ("pointer-events", "all")
         , ("text-align", "center")
         ]
