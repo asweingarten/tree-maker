@@ -81,6 +81,7 @@ type Msg
   | CommandPalette CommandPalette.Msg
   | ChangePage Page
   | ToggleCommandPalette
+  | HideCommandPalette String
   | Myo String
 
 type Page

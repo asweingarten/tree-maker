@@ -37,7 +37,7 @@ update msg model =
           ({model | scan = {scan | isPaused = True}}
           , Cmd.none)
         Resume _ ->
-          ({model | scan = {scan | isPaused = False}}
+          ({model | scan = {scan | isPaused = False } }
           , Cmd.none)
     ScanningSettings msg ->
       let (scanningSettings, cmd) = ScanningSettings.update model.scanningSettings msg
@@ -51,9 +51,12 @@ update msg model =
       ({ model | commandPalette = commandPalette }
       , Cmd.map CommandPalette cmd)
     ChangePage page ->
-      ({ model | page = page }, Ports.switchTree <| toString page)
+      ({ model | page = page, showCommandPalette = False }
+      , Ports.switchTree <| toString page)
     ToggleCommandPalette ->
       ({ model | showCommandPalette = not model.showCommandPalette }, Cmd.none)
+    HideCommandPalette foo ->
+      ({ model | showCommandPalette = False }, Cmd.none)  
     Myo foo ->
       let
         activeCommand = model.commandPalette.commandPalette.activeCommand

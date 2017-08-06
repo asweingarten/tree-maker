@@ -51,11 +51,20 @@ subscriptions model =
   , Ports.regions Regions
   , Ports.pauseScanning (\x -> Scanning <| Pause x)
   , Ports.resumeScanning (\x -> Scanning <| Resume x)
-  , Ports.receiveExternalCmd External
+  , Ports.receiveExternalCmd External -- hack
+  , Ports.changePage changePage -- hack
+  , Ports.hideCommandPalette HideCommandPalette
   , scanSubscription model.scan
   , myoSubscription
   , Sub.map CommandPalette (CommandPalette.subscriptions model.commandPalette)
   ]
+
+changePage : String -> Msg
+changePage pageString =
+  case pageString of
+    "Website" -> ChangePage Website
+    "ScanningSettingsPage" -> ChangePage ScanningSettingsPage
+    _ -> NoOp
 
 keyDownSubscription : Model -> Keyboard.KeyCode -> Msg
 keyDownSubscription model keycode =

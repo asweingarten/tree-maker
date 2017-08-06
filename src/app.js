@@ -24,6 +24,12 @@ window.addEventListener("click", (event) => TreeNavigation.ports.clicks.send({ x
 window.addEventListener("mousemove", (event) => TreeNavigation.ports.moves.send({ x: ~~event.clientX, y: ~~event.clientY}));
 
 // PageChange
+TreeNavigation.ports.toggleTree.subscribe(x => {
+  let changeTo = (state.treeName === 'Website') ? 'ScanningSettingsPage' : 'Website';
+  TreeNavigation.ports.changePage.send(changeTo);
+  TreeNavigation.ports.hideCommandPalette.send('x');
+})
+
 TreeNavigation.ports.switchTree.subscribe(page => {
   mutationObserver.disconnect();
   setTimeout(() => {
@@ -42,8 +48,6 @@ function createState(treeName) {
     case 'ScanningSettingsPage':
       rootNode = document.getElementById('tn-settings');
       break;
-    case 'Toggle':
-      return state.treeName === 'Website' ? createState('ScanningSettingsPage') : createState('Website');
     default:
       return createState('Website');
   }
@@ -75,7 +79,10 @@ TreeNavigation.ports.next.subscribe(next)
 TreeNavigation.ports.previous.subscribe(previous)
 TreeNavigation.ports.up.subscribe(up);
 
-TreeNavigation.ports.startScanning.subscribe(d => TreeNavigation.ports.resumeScanning.send('x'));
+TreeNavigation.ports.startScanning.subscribe(d => {
+  TreeNavigation.ports.resumeScanning.send('x');
+  TreeNavigation.ports.hideCommandPalette.send('x');
+});
 
 TreeNavigation.ports.activated.subscribe(x => TreeNavigation.ports.pauseScanning.send('x'));
 
@@ -84,6 +91,8 @@ function select(foo) {
 
   const currentlyHighlightedNode = state.currentNode.children[state.currentChildIndex];
   if (!currentlyHighlightedNode) return;
+
+  TreeNavigation.ports.hideCommandPalette.send('x');
 
   if (currentlyHighlightedNode.children.length === 0) {
     // Click but don't make it the current node
@@ -123,6 +132,7 @@ function previous(foo) {
 function up(foo) {
   console.log('UP');
   if (state.currentNode.parent) {
+    TreeNavigation.ports.hideCommandPalette.send('x');
     state.currentChildIndex = 0;
     state.currentNode = state.currentNode.parent;
     highlight(Actions.UP, state.currentNode.children[state.currentChildIndex])

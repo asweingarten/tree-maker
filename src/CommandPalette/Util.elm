@@ -7,7 +7,7 @@ directionToPort: Direction -> Cmd Msg
 directionToPort direction =
   case direction of
     North -> Ports.up 1
-    West -> Ports.switchTree "Toggle"
+    West -> Ports.toggleTree "x"
     South -> Ports.select 1
     East -> Ports.startScanning 1
     _ -> Cmd.none
