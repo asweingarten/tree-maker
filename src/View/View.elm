@@ -13,14 +13,14 @@ view model  =
   let
     activeRegionHighlight = highlight "3px solid orangered" model.activeRegion
     -- childrenHighlights = List.map (highlight "2px dashed lightsteelblue") childRegions
-    siblingHighlights = List.map (highlight "2px dashed mediumaquamarine") model.siblingRegions
+    -- siblingHighlights = List.map (highlight "2px dashed mediumaquamarine") model.siblingRegions
     (commandPalette, cpTrigger) =
       case model.showCommandPalette of
         True -> (CommandPalette.view model.commandPalette.commandPalette |> Html.map CommandPalette, div [] [])
         False -> (div [] [], commandPaletteTrigger)
   in
   div [id "tree-nav-screen"]
-    [ div [id "highlights"] ([activeRegionHighlight] ++ siblingHighlights)
+    [ div [id "highlights"] ([activeRegionHighlight] )
     , page model
     , commandPalette
     , cpTrigger
@@ -41,9 +41,13 @@ commandPaletteTrigger =
         , ("border-radius", "3px")
         , ("pointer-events", "all")
         , ("text-align", "center")
+        , ("display", "flex")
+        , ("align-items", "center")
+        , ("justify-content", "center")
+        , ("font-size", "1.5rem")
         ]
   in
-  div [myStyle, onMouseEnter ToggleCommandPalette] [text "Actions"]
+  div [myStyle, onMouseEnter ToggleCommandPalette] [div [] [text "Actions"] ]
 
 page : Model -> Html Msg
 page model =
