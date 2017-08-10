@@ -26,7 +26,7 @@ view model =
       , gridItem (incrementDecrementField SetInterval "Interval" model.interval)
       , gridItem (websiteOption "http://www.foxnews.com" "Fox News")
       , gridItem (websiteOption "https://www.youtube.com" "YouTube")
-      , gridItem (websiteOption "play.spotyify.com" "Spotify")
+      , gridItem (websiteOption "http://play.spotify.com" "Spotify")
       ]
   in
   fullscreen "tn-settings" html
