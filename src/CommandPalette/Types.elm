@@ -19,7 +19,7 @@ type alias Model =
   , windowSize : Size
   , screenSize : Size
   , direction : Maybe Direction
-  , showConfiguration : Bool
+  , isOpen: Bool
   }
 
 type Direction

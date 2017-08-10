@@ -28,7 +28,9 @@ update msg model =
   case msg of
     PauseScanning -> (model, Cmd.none)
     CursorMoved newPosition ->
-      onCursorMoved newPosition model
+      case model.isOpen of
+        True -> onCursorMoved newPosition model
+        False -> (model, Cmd.none)
     Dwell command direction time ->
       let (updatedModel, cmd) = Dwell.update model command direction time
       in

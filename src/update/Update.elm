@@ -54,9 +54,13 @@ update msg model =
       ({ model | page = page, showCommandPalette = False }
       , Ports.switchTree <| toString page)
     ToggleCommandPalette ->
-      ({ model | showCommandPalette = not model.showCommandPalette }, Cmd.none)
+      let
+        cp = model.commandPalette
+        newCp = {cp | isOpen = not cp.isOpen }
+      in
+      ({ model | showCommandPalette = not model.showCommandPalette, commandPalette = newCp }, Cmd.none)
     HideCommandPalette foo ->
-      ({ model | showCommandPalette = False }, Cmd.none)  
+      ({ model | showCommandPalette = False }, Cmd.none)
     Myo foo ->
       let
         activeCommand = model.commandPalette.commandPalette.activeCommand
