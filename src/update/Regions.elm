@@ -49,6 +49,7 @@ isElementInViewport geometry viewportSize isTall isWide =
     False ->
       geometry.y >= 0
       && (geometry.x >= 0)
+      && (geometry.x + geometry.width) <= viewportSize.width
       && ((geometry.y + geometry.height) <= viewportSize.height)
       -- && (geometry.x + geometry.width <= size.width)
 -- if (!isElementInViewport(currentDomElement)) {

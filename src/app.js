@@ -64,17 +64,24 @@ function createState(treeName) {
 }
 
 // SCROLLING
+let previousElement = null;
 TreeNavigation.ports.scrollIntoView.subscribe(isTall => {
   // console.log("SCROLL TIME");
   const regionInFocus = state.currentNode.children[state.currentChildIndex].element;
   const geometry = regionInFocus.getBoundingClientRect();
   console.log(`left: ${geometry.left}`)
+  console.log(`right: ${geometry.right}`)
   window.scrollBy(geometry.left, 0);
   regionInFocus.scrollIntoView(isTall)
   if (isTall) {
     window.scrollBy(0, -100);
   }
-  highlight(Actions.NOOP, state.currentNode.children[state.currentChildIndex]);
+
+  // global state hack to avoid scrolling/highlighting forever
+  if (previousElement != regionInFocus) {
+    previousElement = regionInFocus;
+    highlight(Actions.NOOP, state.currentNode.children[state.currentChildIndex]);
+  }
 });
 
 TreeNavigation.ports.select.subscribe(select);
