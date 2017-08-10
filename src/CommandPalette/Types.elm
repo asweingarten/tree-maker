@@ -13,11 +13,7 @@ type alias CommandPalette =
   }
 
 type alias Model =
-  { mousePosition: Position
-  , commandPalette: CommandPalette
-  , gazePosition: Position
-  , windowSize : Size
-  , screenSize : Size
+  { commandPalette: CommandPalette
   , direction : Maybe Direction
   , isOpen: Bool
   }
@@ -43,7 +39,6 @@ type Msg
   | Dwell DwellCommand Direction Time
   | ChangeDirection Direction
   | WindowResize Size
-  | ScreenSize Size
   | SetActivationTime String
   | PauseScanning
   | ActivateActiveCommand

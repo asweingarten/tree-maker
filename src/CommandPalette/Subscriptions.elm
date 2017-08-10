@@ -11,7 +11,6 @@ subscriptions model =
   Sub.batch
     [ Ports.moves CursorMoved
     , Window.resizes WindowResize
-    , Ports.screenSize ScreenSize
     , dwellCommandSubscription model.commandPalette
     ]
 
