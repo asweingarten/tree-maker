@@ -5,7 +5,7 @@ import Task
 import Window exposing (Size)
 import Debug
 
-import CommandPalette.Types exposing (Model, CommandPalette, Msg(..), Direction(..), Square)
+import CommandPalette.Types exposing (Model, Msg(..), Direction(..), Square)
 import CommandPalette.ChangeDirection as ChangeDirection
 import CommandPalette.Dwell as Dwell
 import CommandPalette.Ports as Ports
@@ -14,9 +14,13 @@ import CommandPalette.Util exposing (directionToPort)
 init : (Model, Cmd Msg)
 init =
   (Model
-    (CommandPalette { x = 920, y = 500, sideLength = 115} False Nothing Nothing 3000)
     Nothing
     False
+    { x = 920, y = 500, sideLength = 115 }
+    False
+    Nothing
+    Nothing
+    3000
   , Task.perform WindowResize Window.size)
 
 update : Msg -> Model -> (Model, Cmd Msg)
@@ -39,49 +43,44 @@ update msg model =
         cmdPX = (wSize.width |> toFloat) / 2 |> round
         cmdPY = (wSize.height |> toFloat) / 2 |> round
         cmdPSideLength = (wSize.height |> toFloat) / 5 |> round
-        newCommandPaletteDimensions = (Square cmdPX cmdPY cmdPSideLength)
-        c = model.commandPalette
-        newC = { c | dimensions = newCommandPaletteDimensions }
+        newDimensions = (Square cmdPX cmdPY cmdPSideLength)
       in
       (
         { model
-        | commandPalette = newC
+        | dimensions = newDimensions
         }
       , Cmd.none
       )
     SetActivationTime newTime ->
       let
-        commandPalette = model.commandPalette
         newTimeFloat = case String.toFloat newTime of
           Ok time -> time
-          Err _ -> commandPalette.activationTimeInMillis
+          Err _ -> model.activationTimeInMillis
       in
-      ({ model | commandPalette = { commandPalette | activationTimeInMillis = newTimeFloat } }
+      ({ model | activationTimeInMillis = newTimeFloat }
       , Cmd.none)
     ActivateActiveCommand ->
       let
-        activeCommand = model.commandPalette.activeCommand
+        activeCommand = model.activeCommand
       in
       case activeCommand of
         Just command ->
           let
             cmd = directionToPort command.direction
-            cp = (\x -> { x | activeCommand = Nothing, candidateCommand = Nothing, isActive = False }) model.commandPalette
           in
-          ({ model | commandPalette = cp }, cmd)
+          ({ model | activeCommand = Nothing, candidateCommand = Nothing, isActive = False }, cmd)
         Nothing ->
           (model, Cmd.none)
 
 onCursorMoved : Position -> Model -> (Model, Cmd Msg)
 onCursorMoved newPosition model =
   let
-    cp = model.commandPalette
-    threshold = cp.dimensions.sideLength
-    deltaX = newPosition.x - cp.dimensions.x
-    deltaY = newPosition.y - cp.dimensions.y
+    threshold = model.dimensions.sideLength
+    deltaX = newPosition.x - model.dimensions.x
+    deltaY = newPosition.y - model.dimensions.y
     (isActive, left, right, up, down) =
       -- calculated incorrectly. dominant direction should take precendence
-      ( cp.isActive
+      ( model.isActive
       , deltaX <= -threshold
       , deltaX >= threshold
       , deltaY <= -threshold
@@ -126,9 +125,7 @@ onCursorMoved newPosition model =
   in
   case (isNewlyActive, model.direction, currentDirection) of
     (True, _, _) ->
-      let commandPalette = { cp | isActive = True}
-      in
-      ({model | commandPalette = commandPalette }, Ports.activated "foo")
+      ({model | isActive = True }, Ports.activated "foo")
     (False, Nothing, Just curDir) -> update (ChangeDirection curDir) model
     (False, _, Nothing) -> (model, Cmd.none)
     (False, Just prevDir, Just curDir) ->

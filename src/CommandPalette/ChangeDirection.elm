@@ -6,21 +6,16 @@ update : Model -> Direction -> (Model, Cmd Msg)
 update model newDirection =
   let
     activeCommand =
-      case model.commandPalette.activeCommand of
+      case model.activeCommand of
         Nothing -> { direction = newDirection, progress = 0, threshold = 10 }
         Just command ->
           case (command.direction |> isEquivalentTo newDirection, command.progress > 0) of
             (_, True) -> command
             (True, False) -> command
             (False, False) -> DwellCommand newDirection 0 10
-    candidateCmd = candidateCommand activeCommand model.commandPalette.candidateCommand newDirection
-    cp = model.commandPalette
-    commandPalette = { cp
-                     | activeCommand = Just activeCommand
-                     , candidateCommand = candidateCmd
-                     }
+    candidateCmd = candidateCommand activeCommand model.candidateCommand newDirection
   in
-    ({model | direction = Just newDirection, commandPalette = commandPalette }, Cmd.none)
+    ({model | direction = Just newDirection, activeCommand = Just activeCommand, candidateCommand = candidateCmd}, Cmd.none)
 
 candidateCommand : DwellCommand -> Maybe DwellCommand -> Direction -> Maybe DwellCommand
 candidateCommand activeCommand previousCandidate currentDirection =

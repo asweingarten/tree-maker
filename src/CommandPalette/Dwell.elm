@@ -10,55 +10,45 @@ import Ports
 update : Model -> DwellCommand -> Direction -> Time -> (Model, Cmd Msg)
 update model command direction time =
   let
-    c = model.commandPalette
     updatedCommand = { command | progress = command.progress + 1 }
     thresholdReached = updatedCommand.progress == updatedCommand.threshold
   in
-    case (c.activeCommand, c.candidateCommand, thresholdReached) of
+    case (model.activeCommand, model.candidateCommand, thresholdReached) of
       (Just activeCommand, Nothing, True) ->
         let
-          cmdP = { c | activeCommand = Nothing, isActive = False }
           _ = log "command about to be fired" activeCommand
         in
-        ({ model | commandPalette = cmdP, direction = Nothing }
+        ({ model | activeCommand = Nothing, isActive = False, direction = Nothing }
         , directionToPort activeCommand.direction)
       (Just activeCommand, Nothing, False) ->
-        let
-          cmdP = { c | activeCommand = Just updatedCommand }
-        in
-        ({ model | commandPalette = cmdP }, Cmd.none)
+        ({ model | activeCommand = Just updatedCommand }, Cmd.none)
       (Just activeCommand, Just candidateCommand, True) ->
         let
-          updatedActiveCommand = activeCommand.direction == updatedCommand.direction
+          didUpdateActiveCommand = activeCommand.direction == updatedCommand.direction
           _ = log "active, cand, and thresholdReached" activeCommand.progress
         in
-        case updatedActiveCommand of
+        case didUpdateActiveCommand of
           True ->
             -- Active Command is fired
-            let
-              cmdP = { c | activeCommand = Nothing, isActive = False, candidateCommand = Nothing }
-            in
-            ({ model | commandPalette = cmdP }
+            ({ model | activeCommand = Nothing, isActive = False, candidateCommand = Nothing }
             , directionToPort activeCommand.direction)
           False ->
             -- Candidate Command takes over
-            let newActiveCmd = Just { candidateCommand | threshold = 10 }
-                cmdP = { c | activeCommand = newActiveCmd, candidateCommand = Nothing }
+            let
+              newActiveCmd = Just { candidateCommand | threshold = 10 }
             in
-            ({ model | commandPalette = cmdP }, Cmd.none)
-
+            ({ model | activeCommand = newActiveCmd, candidateCommand = Nothing }
+            , Cmd.none)
       (Just activeCommand, Just candidateCommand, False) ->
         let updatedActiveCommand = activeCommand.direction == updatedCommand.direction
         in
         case updatedActiveCommand of
           True ->
             -- update the active command
-            let cmdP = { c | activeCommand = Just updatedCommand }
-            in
-            ({ model | commandPalette = cmdP }, Cmd.none)
+            ({ model | activeCommand = Just updatedCommand }
+            , Cmd.none)
           False ->
             -- update the candidate command
-            let cmdP = { c | candidateCommand = Just updatedCommand }
-            in
-            ({ model | commandPalette = cmdP }, Cmd.none)
+            ({ model | candidateCommand = Just updatedCommand }
+            , Cmd.none)
       (_,_,_) -> (model, Cmd.none)

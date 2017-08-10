@@ -11,10 +11,10 @@ subscriptions model =
   Sub.batch
     [ Ports.moves CursorMoved
     , Window.resizes WindowResize
-    , dwellCommandSubscription model.commandPalette
+    , dwellCommandSubscription model
     ]
 
-dwellCommandSubscription : CommandPalette -> Sub Msg
+dwellCommandSubscription : Model -> Sub Msg
 dwellCommandSubscription commandPalette =
   let
     activeCommand = commandPalette.activeCommand

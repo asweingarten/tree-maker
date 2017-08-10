@@ -4,18 +4,14 @@ import Time exposing(Time)
 import Mouse exposing(Position)
 import Window exposing(Size)
 
-type alias CommandPalette =
-  { dimensions: Square
+type alias Model =
+  { direction : Maybe Direction
+  , isOpen: Bool
+  , dimensions: Square
   , isActive: Bool
   , activeCommand: Maybe DwellCommand
   , candidateCommand: Maybe DwellCommand
   , activationTimeInMillis: Float
-  }
-
-type alias Model =
-  { commandPalette: CommandPalette
-  , direction : Maybe Direction
-  , isOpen: Bool
   }
 
 type Direction

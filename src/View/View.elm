@@ -16,7 +16,7 @@ view model  =
     -- siblingHighlights = List.map (highlight "2px dashed mediumaquamarine") model.siblingRegions
     (commandPalette, cpTrigger) =
       case model.showCommandPalette of
-        True -> (CommandPalette.view model.commandPalette.commandPalette |> Html.map CommandPalette, div [] [])
+        True -> (CommandPalette.view model.commandPalette |> Html.map CommandPalette, div [] [])
         False -> (div [] [], commandPaletteTrigger)
   in
   div [id "tree-nav-screen"]

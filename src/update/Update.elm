@@ -63,7 +63,7 @@ update msg model =
       ({ model | showCommandPalette = False }, Cmd.none)
     Myo foo ->
       let
-        activeCommand = model.commandPalette.commandPalette.activeCommand
+        activeCommand = model.commandPalette.activeCommand
       in
       case activeCommand of
         Just command ->

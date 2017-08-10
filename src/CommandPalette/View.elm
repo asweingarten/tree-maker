@@ -3,12 +3,12 @@ module CommandPalette.View exposing (view)
 import Html exposing (..)
 import Html.Attributes exposing (style)
 
-import CommandPalette.Types exposing (CommandPalette, Msg(..))
+import CommandPalette.Types exposing (Model, Msg(..))
 
 import CommandPalette.ProgressBar as ProgressBar
 
-view : CommandPalette -> Html Msg
-view {dimensions, isActive, activeCommand, candidateCommand, activationTimeInMillis} =
+view : Model -> Html Msg
+view {direction, isOpen, dimensions, isActive, activeCommand, candidateCommand, activationTimeInMillis} =
   let
     x = dimensions.x
     y = dimensions.y
