@@ -60,7 +60,12 @@ update msg model =
       in
       ({ model | showCommandPalette = not model.showCommandPalette, commandPalette = newCp }, Cmd.none)
     HideCommandPalette foo ->
-      ({ model | showCommandPalette = False }, Cmd.none)
+      let
+        cp = model.commandPalette
+        newCp = {cp | isOpen = False }
+      in
+      ({ model | showCommandPalette = False, commandPalette = newCp }
+      , Cmd.none)
     Myo foo ->
       let
         activeCommand = model.commandPalette.activeCommand
