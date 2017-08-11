@@ -32,7 +32,15 @@ update msg model =
       case msg of
         Scan time ->
           -- update scan state
-          (model, Ports.next 1)
+          let
+            cmd =
+              case model.commandPalette.isActive of
+                True -> Cmd.none
+                False -> Ports.next 1
+          in
+          (model, cmd)
+        Toggle _ ->
+          ({ model | scan = { scan | isPaused = not scan.isPaused } }, Cmd.none)
         Pause _ ->
           ({model | scan = {scan | isPaused = True}}
           , Cmd.none)

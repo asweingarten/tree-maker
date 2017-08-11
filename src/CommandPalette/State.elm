@@ -125,7 +125,7 @@ onCursorMoved newPosition model =
   in
   case (isNewlyActive, model.direction, currentDirection) of
     (True, _, _) ->
-      ({model | isActive = True }, Ports.activated "foo")
+      ({model | isActive = True }, Cmd.none)
     (False, Nothing, Just curDir) -> update (ChangeDirection curDir) model
     (False, _, Nothing) -> (model, Cmd.none)
     (False, Just prevDir, Just curDir) ->

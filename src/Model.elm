@@ -92,6 +92,7 @@ type ScanMsg
   = Scan Time
   | Pause String
   | Resume String
+  | Toggle String
 
 type Action
   = Select

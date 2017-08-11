@@ -9,5 +9,5 @@ directionToPort direction =
     North -> Ports.up 1
     West -> Ports.toggleTree "x"
     South -> Ports.select 1
-    East -> Ports.startScanning 1
+    East -> Ports.triggerToggleScanning 1
     _ -> Cmd.none

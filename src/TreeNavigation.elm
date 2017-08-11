@@ -51,6 +51,7 @@ subscriptions model =
   , Ports.regions Regions
   , Ports.pauseScanning (\x -> Scanning <| Pause x)
   , Ports.resumeScanning (\x -> Scanning <| Resume x)
+  , Ports.toggleScanning (\x -> Scanning <| Toggle x )
   , Ports.receiveExternalCmd External -- hack
   , Ports.changePage changePage -- hack
   , Ports.hideCommandPalette HideCommandPalette

@@ -89,12 +89,10 @@ TreeNavigation.ports.next.subscribe(next)
 TreeNavigation.ports.previous.subscribe(previous)
 TreeNavigation.ports.up.subscribe(up);
 
-TreeNavigation.ports.startScanning.subscribe(d => {
-  TreeNavigation.ports.resumeScanning.send('x');
+TreeNavigation.ports.triggerToggleScanning.subscribe(d => {
+  TreeNavigation.ports.toggleScanning.send('x');
   TreeNavigation.ports.hideCommandPalette.send('x');
 });
-
-TreeNavigation.ports.activated.subscribe(x => TreeNavigation.ports.pauseScanning.send('x'));
 
 function select(foo) {
   if (!state) return;
